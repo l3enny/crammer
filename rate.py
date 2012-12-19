@@ -11,8 +11,7 @@ def rate(transition, f):
     dE = transition.dE
     def integrand(E):
         # set up integrand for quadpack
-        result = sigma(E) * f(E) * (2*E/me)**0.5
-        return result
+        return sigma(E) * f(E) * (2*E/me)**0.5
     # Calculate the rate coefficient provided a list of electron temperatures
     # and the expected distribution
     if transition.inverse:
