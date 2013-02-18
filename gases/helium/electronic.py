@@ -1,7 +1,7 @@
 """
 Electron-Atom Excitation Cross Section Constants for Helium
 author: Ben Yee
-last revised: 2012-05-08
+last revised: 2013-02-18
 
 This file contains the fitting constants necessary to generate the
 cross section data for helium. 

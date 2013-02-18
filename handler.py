@@ -2,7 +2,11 @@
 Basic load and save functions.
 """
 import os
-import numpy as np
+import numpy as N
+
+def load_kushner(fid):
+    
+    return None
 
 def load(fids):
     params = []
@@ -10,17 +14,14 @@ def load(fids):
         old = fid.readlines()[-1].split(',')
         old[-1] = old[-1].strip('\n')
         params.append([float(i) for i in old])
-    params[1] = np.array(params[1])
+    params[1] = N.array(params[1])
     return times, populations, errors, emissions
     
 def save(fids, times, populations, errors, emissions):
-    np.savetxt(fids[0], times, delimiter=',')
-    np.savetxt(fids[1], populations, delimiter=',')
-    np.savetxt(fids[2], errors, delimiter=',')
-    #for i in emissions:
-    #    print i
-    #    raw_input('')
-    np.savetxt(fids[3], emissions, delimiter=',')
+    N.savetxt(fids[0], times, delimiter=',')
+    N.savetxt(fids[1], populations, delimiter=',')
+    N.savetxt(fids[2], errors, delimiter=',')
+    N.savetxt(fids[3], emissions, delimiter=',')
     return None
 
 def close(fids):
