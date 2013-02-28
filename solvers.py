@@ -3,52 +3,6 @@ Sets up the matrix and calculates the solutions.
 """
 
 import numpy as np
-from numpy import exp
-import rate
-
-def matrixgen(gas, f, Te):
-    """
-    Generates the electronic, optical and atomic transition matrices
-    for a specified gas module. A functional EEDF, f, must be supplied
-    which takes the energy as its only argument. The matrices are
-    populated in an "intelligent" order such that the total population
-    is preserved and de-excitation rates are calculated via the
-    principle of detailed balance.
-    """
-    # initialize coefficient matrices
-    states = gas.states.states
-    order = sorted(states.keys(), key=lambda state:states[state]['E'])
-    dim = len(states)
-    ematrix = np.zeros((dim, dim))
-    omatrix = ematrix.copy()
-    amatrix = ematrix.copy()
-    
-    # populate electronic transition matrix
-    for i in range(dim):
-        gi = states[order[i]]['g']
-        Ei = states[order[i]]['E']
-        for j in range(i + 1, dim):
-            gf = states[order[j]]['g']
-            Ef = states[order[j]]['E']
-            transition = gas.electronic.Transition(order[i], order[j])
-            down = rate.rate(transition, f)
-            ematrix[j, i] = down
-            ematrix[i, j] = down * (gf/gi) * np.exp((Ei - Ef)/Te)
-        ematrix[i, i] = -sum(ematrix[:, i])
-    
-    # populate optical transition matrix
-    for i in range(1, dim):
-        for j in range(i):
-            omatrix[j, i] = gas.optical.A(order[i], order[j])
-        omatrix[i, i] = -sum(omatrix[:, i])
-
-    # populate atomic transition matrix
-    for i in range(dim):
-        for j in range(dim):
-            amatrix[j, i] = gas.atomic.K(order[i], order[j])
-        amatrix[i, i] = -sum(amatrix[:, i])
-    
-    return ematrix, omatrix, amatrix
 
 def equilibrium(matrix):
     """

@@ -5,7 +5,9 @@ import os
 import numpy as N
 
 def load_kushner(fid):
-    
+    for line in fid:
+        if "RATE CONST" in line:
+            
     return None
 
 def load(fids):

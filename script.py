@@ -17,6 +17,7 @@ import numpy as np
 from constants import *     # Useful elementary constants
 import distributions        # Module containing various distributions
 import inout                # Input/output handling
+import matrixgen            # Generates the rate matrices
 import rate                 # Determines reaction rates
 import solvers              # Handles general state calculations
 
@@ -33,7 +34,10 @@ states = gas.states.states
 order = sorted(states.keys(), key=lambda state:states[state]['E'])
 
 # Generate steady state transition matrices and radiation matrix
-Ae, Ao, Aa = solvers.matrixgen(gas, dist, Te)
+#Ae, Ao, Aa = solvers.matrixgen(gas, dist, Te)
+Ae = matrixgen.electronic(gas, dist, Te)
+Ao = matrixgen.optical(gas)
+Aa = matrixgen.atomic(gas
 Arad = Ao.copy()
 np.fill_diagonal(Arad, 0)
 
@@ -50,32 +54,29 @@ wavefile = open(prefix + '_wavelengths.csv', 'w')
 np.savetxt(wavefile, wavelengths, delimiter=',')
 wavefile.close()
 
-# Open data files for dump, check for pre-existing data, solve for equilibrium
+# Open data files for dump, solve for equilibrium
 Ng = Na * 8.314 * Tg/P
 fids, restart = inout.detect(prefix)
-if restart:
-    N, t0, eps, l = inout.load(fids)
-else:
-    t0 = 0.0
-    eps = 0.0
-    if 'ion' in states:
-        eqerr = 1.0
-        l = 0.0
-        n = ne
-        equalize = False
-        if equalize:
-            # Iterative solver for equilibrium, ne is dynamic with ionization
-            print 'Iteratively solving for correct charge density'
-            while eqerr > TOL:
-                N = solvers.equilibrium(Ae*n + Ao + Aa*Ng) * Ng
-                eqerr = abs(n - N[-1])/N[-1]
-                n = N[-1]
-        else:
-            N = solvers.equilibrium(Ae*ne + Ao + Aa*Ng) * Ng
-        N[-1] = n  # Assume quasineutrality
-        ne = n
+t0 = 0.0
+eps = 0.0
+if 'ion' in states:
+    eqerr = 1.0
+    l = 0.0
+    n = ne
+    equalize = False
+    if equalize:
+        # Iterative solver for equilibrium, ne is dynamic with ionization
+        print 'Iteratively solving for correct charge density'
+        while eqerr > TOL:
+            N = solvers.equilibrium(Ae*n + Ao + Aa*Ng) * Ng
+            eqerr = abs(n - N[-1])/N[-1]
+            n = N[-1]
     else:
-            N = solvers.equilibrium(Ae*ne + Ao + Aa*Ng) * Ng
+        N = solvers.equilibrium(Ae*ne + Ao + Aa*Ng) * Ng
+    N[-1] = n  # Assume quasineutrality
+    ne = n
+else:
+    N = solvers.equilibrium(Ae*ne + Ao + Aa*Ng) * Ng
 
 # Initialize arrays with appropriate starting values
 populations = [N]
@@ -116,7 +117,4 @@ while times[-1] < T:
         print "Simulation Time:", (end - start), "\n"
 
 populations = np.array(populations)
-if restart:
-    inout.save(fids, times[1:], populations[1:, :], errors[1:], emissions[1:, :])
-else:
-    inout.save(fids, times, populations, errors, emissions)
+inout.save(fids, times, populations, errors, emissions)
