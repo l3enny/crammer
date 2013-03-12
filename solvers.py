@@ -4,7 +4,7 @@ Sets up the matrix and calculates the solutions.
 
 import numpy as np
 
-def equilibrium(matrix):
+def svd(matrix):
     """
     Determines the solution for a homogeneous system of equations in
     the for Ax = 0. The user supplies a matrix, A, as the input and
@@ -15,6 +15,14 @@ def equilibrium(matrix):
     #TODO: Is the last row of v always associated with the lowest s?
     null = np.abs(v[-1,:]).T
     return null
+
+def ion_equilibrium(dfdt, Ng):
+    err = 1.0
+    while err > TOL:
+        N = equilibrium(dfdt(0.0)) * Ng
+        err = abs(n - N[-1]) / N[-1]
+        n = N[-1]
+    return N
 
 def rkf45(dfdt, t0, y0, hmax, hmin, TOL):
     """

@@ -51,19 +51,21 @@ wavefile = open(prefix + '_wavelengths.csv', 'w')
 np.savetxt(wavefile, wavelengths, delimiter=',')
 wavefile.close()
 
-# Solve for equilibrium
-eqerr = 1.0
+# Set the initial conditions
+times = [0.0]
+emissions = [np.zeros(sum(range(1, len(order))))]
+populations = solvers.ion_equilibrium(dfdt, ne, Ng)
+
+
+#TODO: Te and ne lead to an over-determined system. Fix this problem!
 n = ne
-while eqerr > TOL:
+eqerr = 1.0
+while eqerr > TOL:      # Iteratively solve for the equilibrium for the givens
     N = solvers.equilibrium(dfdt(0.0)) * Ng
     eqerr = abs(n - N[-1]) / N[-1]
     n = N[-1]
-
-# Initialize arrays with appropriate starting values
 populations = [N]
-times = [0.0]
-errors = [0.0]
-emissions = [np.zeros(sum(range(1, len(order))))]
+
 
 # Function to append emissions values for each time step
 def rad(A, N, dt):
@@ -74,8 +76,10 @@ def rad(A, N, dt):
     return emits
     
 # Initialize solver and evolve states over time
-Arad = np.fill_diagonal(Ao.copy(), 0)
-stepper = solvers.rkf45(f, times[0], populations[0], hmax, hmin, TOL)
+Arad = Ao.copy()
+np.fill_diagonal(Arad, 0)
+errors = [0.0]
+stepper = solvers.rkf45(dfdt, times[0], populations[0], hmax, hmin, TOL)
 start = datetime.now()
 while times[-1] < T:
     N, t, eps = stepper.next()  # Step to next value with generator function
@@ -94,4 +98,4 @@ while times[-1] < T:
         print "Simulation Time:", (end - start), "\n"
 
 populations = np.array(populations)
-handler.save(times, populations, errors, emissions)
+handler.save(prefix, [times, populations, errors, emissions])

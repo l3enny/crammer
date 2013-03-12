@@ -11,11 +11,10 @@ import numpy as N
 
 import rate
 
-states = gas.states.states
-order = sorted(states.keys(), key=lambda state:states[state]['E'])
-dim = len(states)
-
 def electronic(gas, f, Te):
+    states = gas.states.states
+    order = sorted(states.keys(), key=lambda state:states[state]['E'])
+    dim = len(states)
     mat = N.zeros((dim, dim))
     for i in range(dim):
         gi = states[order[i]]['g']
@@ -31,6 +30,9 @@ def electronic(gas, f, Te):
     return mat
 
 def optical(gas):
+    states = gas.states.states
+    order = sorted(states.keys(), key=lambda state:states[state]['E'])
+    dim = len(states)
     mat = N.zeros((dim, dim))
     for i in range(1, dim):
         for j in range(i):
@@ -39,6 +41,9 @@ def optical(gas):
     return mat
 
 def atomic(gas):
+    states = gas.states.states
+    order = sorted(states.keys(), key=lambda state:states[state]['E'])
+    dim = len(states)
     mat = N.zeros((dim, dim))
     for i in range(dim):
         for j in range(dim):
