@@ -1,9 +1,14 @@
+import distributions
+
+# Unnecessary, but convenient values
+Tg = 300                             # neutral gas temperature, K
+P = 10.0 * 133.322                   # neutral gas pressure, Pa
+
 #  Physical system options (user-defined)
 Te = 1.0 * q                         # effective electron temperature, J
 dist = distributions.drumax(0.5, Te) # load EEDF
 ne = 1e10 * 1e6                      # background electron density, 1/m^3
-Tg = 300                             # neutral gas temperature, K
-P = 10.0 * 133.322                   # neutral gas pressure, Pa
+Ng = 6.02214129e23 * 8.314 * Tg/P    # neutral gas density, 1/m^3
 
 # Solver options (user-defined)
 T = 0.3e-6          # duration to simulate, s

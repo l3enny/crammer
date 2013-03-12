@@ -15,7 +15,6 @@ import numpy as np
 
 # Included Modules
 from constants import *     # Useful elementary constants
-import distributions        # Module containing various distributions
 import handler              # Input/output handling
 import matrixgen            # Generates the rate matrices
 import rate                 # Determines reaction rates
@@ -33,7 +32,11 @@ order = sorted(states.keys(), key=lambda state:states[state]['E'])
 # Generate steady state transition matrices and radiation matrix
 Ae = matrixgen.electronic(gas, dist, Te)
 Ao = matrixgen.optical(gas)
-Aa = matrixgen.atomic(gas
+Aa = matrixgen.atomic(gas)
+
+# Define rate equation
+def dfdt(t):
+    return Ae*ne + Ao + Aa*Ng
 
 # Generate all emission wavelengths
 wavelengths = np.array([])
@@ -49,11 +52,10 @@ np.savetxt(wavefile, wavelengths, delimiter=',')
 wavefile.close()
 
 # Solve for equilibrium
-Ng = Na * 8.314 * Tg/P
 eqerr = 1.0
 n = ne
 while eqerr > TOL:
-    N = solvers.equilibrium(Ae*ne + Ao + Aa*Ng) * Ng
+    N = solvers.equilibrium(dfdt(0.0)) * Ng
     eqerr = abs(n - N[-1]) / N[-1]
     n = N[-1]
 
@@ -63,12 +65,7 @@ times = [0.0]
 errors = [0.0]
 emissions = [np.zeros(sum(range(1, len(order))))]
 
-# Define rate equation
-def f(t, y):
-    # Include any time dependent perturbations here
-    rates = np.dot((Ae*ne + Ao + Aa*Ng), y)
-    return rates
-
+# Function to append emissions values for each time step
 def rad(A, N, dt):
     emits = np.array([])
     for row in range(A.shape[0] - 1):

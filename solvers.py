@@ -16,7 +16,7 @@ def equilibrium(matrix):
     null = np.abs(v[-1,:]).T
     return null
 
-def rkf45(f, t0, y0, hmax, hmin, TOL):
+def rkf45(dfdt, t0, y0, hmax, hmin, TOL):
     """
     Runge-Kutta-Fehlberg generator implemented per B. Bradie's "A
     Friendly Introduction to Numerical Analysis," incorporating
@@ -24,6 +24,9 @@ def rkf45(f, t0, y0, hmax, hmin, TOL):
     variable which outputs the next step every time the .next() method
     is called.
     """
+    def f(t, y):
+        return np.dot(dfdt(t), y)
+
     A = [0.25,    0.25]
     B = [3./8,    3./32,       9./32]
     C = [12./13,  1932./2197, -7200./2197,   7296./2197]

@@ -15,11 +15,9 @@ states = gas.states.states
 order = sorted(states.keys(), key=lambda state:states[state]['E'])
 dim = len(states)
 
-
-
 def electronic(gas, f, Te):
     mat = N.zeros((dim, dim))
-    for in in range(dim):
+    for i in range(dim):
         gi = states[order[i]]['g']
         Ei = states[order[i]]['E']
         for j in range(i + 1, dim):
