@@ -4,16 +4,13 @@ Basic load and save functions.
 import os
 import numpy as N
 
-def load(fids):
-    params = []
-    for fid in fids:
-        old = fid.readlines()[-1].split(',')
-        old[-1] = old[-1].strip('\n')
-        params.append([float(i) for i in old])
-    params[1] = N.array(params[1])
-    return times, populations, errors, emissions
-    
-def save(fids, times, populations, errors, emissions):
+def open():
+    # function that opens the necessary files and returns their ids
+    pass
+
+def save(times, populations, errors, emissions):
+    # responsible for saving all the passed variables
+    fids = open()
     N.savetxt(fids[0], times, delimiter=',')
     N.savetxt(fids[1], populations, delimiter=',')
     N.savetxt(fids[2], errors, delimiter=',')
@@ -21,6 +18,7 @@ def save(fids, times, populations, errors, emissions):
     return None
 
 def close(fids):
+    # closes all files opened for writing out the results
     for fid in fids:
         fid.close()
     return None

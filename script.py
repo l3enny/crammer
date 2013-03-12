@@ -94,4 +94,4 @@ while times[-1] < T:
         print "Simulation Time:", (end - start), "\n"
 
 populations = np.array(populations)
-handler.save(fids, times, populations, errors, emissions)
+handler.save(times, populations, errors, emissions)
