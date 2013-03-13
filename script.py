@@ -87,4 +87,4 @@ while times[-1] < T:
 wavelengths = solvers.wavelengths(states, order)
 # Move populations to an array for proper output
 populations = np.array(populations)
-handler.save(prefix, [times, populations, errors, emissions, wavelengths])
+handler.save([times, populations, errors, emissions, wavelengths], prefix)
