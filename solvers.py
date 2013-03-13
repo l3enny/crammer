@@ -2,6 +2,8 @@
 Sets up the matrix and calculates the solutions.
 """
 
+from constants import *
+
 import numpy as np
 
 def svd(matrix):
@@ -23,6 +25,17 @@ def ion_equilibrium(dfdt, Ng):
         err = abs(n - N[-1]) / N[-1]
         n = N[-1]
     return N
+
+def wavelengths(states, order):
+    w = np.array([])
+    for i in order:
+        Ei = states[i]['E']
+        for f in [j for j in order if j != i]:
+            Ef = states[f]['E']
+            if Ef < Ei:
+                continue
+            w = np.append(w, (h * c) / (Ef - Ei))
+    return w
 
 def rkf45(dfdt, t0, y0, hmax, hmin, TOL):
     """

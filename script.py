@@ -25,7 +25,8 @@ from settings import *               # load user settings file
 from gases import helium as gas      # choose gas to simulate
 
 
-# Provide access to gas state information and matrix state order
+# Convenient localization of state information, and ordering in 
+# ascending energy.
 states = gas.states.states
 order = sorted(states.keys(), key=lambda state:states[state]['E'])
 
@@ -38,34 +39,13 @@ Aa = matrixgen.atomic(gas)
 def dfdt(t):
     return Ae*ne + Ao + Aa*Ng
 
-# Generate all emission wavelengths
-wavelengths = np.array([])
-for istate in order:
-    Ei = states[istate]['E']
-    for fstate in [i for i in order if i != istate]:
-        Ef = states[fstate]['E']
-        if Ef < Ei:
-            continue
-        wavelengths = np.append(wavelengths, (h * c) / (Ef - Ei))
-wavefile = open(prefix + '_wavelengths.csv', 'w')
-np.savetxt(wavefile, wavelengths, delimiter=',')
-wavefile.close()
-
 # Set the initial conditions
 times = [0.0]
 emissions = [np.zeros(sum(range(1, len(order))))]
-populations = solvers.ion_equilibrium(dfdt, ne, Ng)
-
-
-#TODO: Te and ne lead to an over-determined system. Fix this problem!
-n = ne
-eqerr = 1.0
-while eqerr > TOL:      # Iteratively solve for the equilibrium for the givens
-    N = solvers.equilibrium(dfdt(0.0)) * Ng
-    eqerr = abs(n - N[-1]) / N[-1]
-    n = N[-1]
-populations = [N]
-
+if 'ion' in states:
+    populations = [solvers.ion_equilibrium(dfdt, Ng)]
+else:
+    populations = [solvers.svd(dfdt(0.0))]
 
 # Function to append emissions values for each time step
 def rad(A, N, dt):
@@ -97,5 +77,8 @@ while times[-1] < T:
         print "Elapsed time:", times[-1]
         print "Simulation Time:", (end - start), "\n"
 
+# Generate all emission wavelengths
+wavelengths = solvers.wavelengths(states, order)
+# Move populations to an array for proper output
 populations = np.array(populations)
-handler.save(prefix, [times, populations, errors, emissions])
+handler.save(prefix, [times, populations, errors, emissions, wavelengths])
