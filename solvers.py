@@ -18,14 +18,6 @@ def svd(matrix):
     null = np.abs(v[-1,:]).T
     return null
 
-def ion_equilibrium(dfdt, Ng):
-    err = 1.0
-    while err > TOL:
-        N = equilibrium(dfdt(0.0)) * Ng
-        err = abs(n - N[-1]) / N[-1]
-        n = N[-1]
-    return N
-
 def wavelengths(states, order):
     w = np.array([])
     for i in order:
@@ -46,7 +38,8 @@ def rkf45(dfdt, t0, y0, hmax, hmin, TOL):
     is called.
     """
     def f(t, y):
-        return np.dot(dfdt(t), y)
+        temp = dfdt(t)
+        return np.dot(temp, y)
 
     A = [0.25,    0.25]
     B = [3./8,    3./32,       9./32]

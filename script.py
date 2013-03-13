@@ -16,6 +16,7 @@ import numpy as np
 # Included Modules
 from constants import *     # Useful elementary constants
 import handler              # Input/output handling
+import initcond             # Helpful functions for initial conditions
 import matrixgen            # Generates the rate matrices
 import rate                 # Determines reaction rates
 import solvers              # Handles general state calculations
@@ -27,6 +28,7 @@ from gases import helium as gas      # choose gas to simulate
 
 # Convenient localization of state information, and ordering in 
 # ascending energy.
+# TODO: This is a bit inelegant; there should be a better way to do this
 states = gas.states.states
 order = sorted(states.keys(), key=lambda state:states[state]['E'])
 
@@ -35,17 +37,15 @@ Ae = matrixgen.electronic(gas, dist, Te)
 Ao = matrixgen.optical(gas)
 Aa = matrixgen.atomic(gas)
 
-# Define rate equation
+# Define the rate equation
+# TODO: Should this be a user setting as well?
 def dfdt(t):
     return Ae*ne + Ao + Aa*Ng
 
 # Set the initial conditions
-times = [0.0]
-emissions = [np.zeros(sum(range(1, len(order))))]
-if 'ion' in states:
-    populations = [solvers.ion_equilibrium(dfdt, Ng)]
-else:
-    populations = [solvers.svd(dfdt(0.0))]
+# TODO: Make this a user setting
+N = initcond.equilibrium(dfdt(0.0)) * Ng
+ne = N[-1] # ensure quasi-neutrality, assumes ion is last state
 
 # Function to append emissions values for each time step
 def rad(A, N, dt):
@@ -55,14 +55,20 @@ def rad(A, N, dt):
         emits = np.append(emits, A[row][i:] * N[i:] * dt)
     return emits
     
-# Initialize solver and evolve states over time
-Arad = Ao.copy()
-np.fill_diagonal(Arad, 0)
+# Initialize solution arrays
+Arad = Ao.clip(min=0)
 errors = [0.0]
+populations = [N]
+times = [0.0]
+emissions = [np.zeros(np.count_nonzero(Arad))]
+
+# Initialize solver and evolve states over time
 stepper = solvers.rkf45(dfdt, times[0], populations[0], hmax, hmin, TOL)
 start = datetime.now()
 while times[-1] < T:
+
     N, t, eps = stepper.next()  # Step to next value with generator function
+    # Using python lists, append is much faster than NumPy equivalent
     emissions.append(rad(Arad, N, t - times[-1]))
     populations.append(N)
     times.append(t)
