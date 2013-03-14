@@ -8,14 +8,18 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   let s:wipebuf = bufnr('%')
 endif
 set shortmess=aoO
-badd +119 script.py
-badd +1 handler.py
-badd +99 gases/helium/boltzmann.txt
+badd +41 script.py
+badd +27 handler.py
+badd +2613 gases/helium/boltzmann.txt
 badd +33 gases/helium/bevels.py
 badd +1 solvers.py
-badd +14 matrixgen.py
+badd +1 matrixgen.py
+badd +30 ~/Dropbox/school/lab/Codes/XOOPIC\ Sims/picsims/picsims.py
+badd +0 transcribe.py
+badd +40 gases/helium/electronic.py
+badd +11 gases/helium/states.py
 silent! argdel *
-edit matrixgen.py
+edit handler.py
 set splitbelow splitright
 wincmd _ | wincmd |
 vsplit
@@ -51,15 +55,15 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 48 - ((28 * winheight(0) + 14) / 29)
+let s:l = 17 - ((12 * winheight(0) + 14) / 29)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-48
-normal! 0
+17
+normal! 04l
 wincmd w
 argglobal
-edit handler.py
+edit transcribe.py
 setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -69,15 +73,15 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 10 - ((3 * winheight(0) + 14) / 29)
+let s:l = 29 - ((28 * winheight(0) + 14) / 29)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-10
-normal! 0
+29
+normal! 04l
 wincmd w
 argglobal
-edit solvers.py
+edit gases/helium/electronic.py
 setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -87,15 +91,15 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 1 - ((0 * winheight(0) + 14) / 29)
+let s:l = 76 - ((19 * winheight(0) + 14) / 29)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-1
+76
 normal! 0
 wincmd w
 argglobal
-edit script.py
+edit gases/helium/electronic.py
 setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -105,14 +109,13 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 41 - ((14 * winheight(0) + 14) / 29)
+let s:l = 517 - ((28 * winheight(0) + 14) / 29)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-41
-normal! 0
+517
+normal! 012l
 wincmd w
-3wincmd w
 exe '1resize ' . ((&lines * 29 + 30) / 61)
 exe 'vert 1resize ' . ((&columns * 88 + 89) / 178)
 exe '2resize ' . ((&lines * 29 + 30) / 61)
