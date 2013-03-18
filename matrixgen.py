@@ -50,4 +50,3 @@ def atomic(gas):
             mat[j, i] = gas.atomic.K(order[i], order[j])
         mat[i, i] = -sum(mat[:, i])
         return mat
-

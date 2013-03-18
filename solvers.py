@@ -29,7 +29,22 @@ def wavelengths(states, order):
             w = np.append(w, (h * c) / (Ef - Ei))
     return w
 
-def rkf45(dfdt, t0, y0, hmax, hmin, TOL):
+# ODE Solvers
+# These are a selection of different solvers. 
+# 
+
+def rk4(f, x, y, h):
+    
+    def k(f, x, y):
+        k1 = h * f(x, y)
+        k2 = h * f(x + 0.5*h, y + 0.5*k1)
+        k3 = h * f(x + 0.5*h, y + 0.5*k2)
+        k4 = h * f(x + h, y + k3)
+        return k1, k2, k3, k4
+    while True:
+        yield y + k1/6 + k2/3 + k3/3 + k4/6
+
+def rkf45(dfdt, t0, y0, hmax, hmin, TOL, fixed=False):
     """
     Runge-Kutta-Fehlberg generator implemented per B. Bradie's "A
     Friendly Introduction to Numerical Analysis," incorporating
