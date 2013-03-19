@@ -45,6 +45,10 @@ def dNdt(t, N):
 
 def dTedt(t, Te):
     # Electron energy equation
+    if t < 1e-9:
+        E = E0
+    else:
+        E = 0
     ne = N[-1] # ensure quasi-neutrality, assumes ion is last state
     Ae = matrixgen.electronic(gas, Te)      # Generate electron rates
     km = matrixgen.km(gas, Te)              # Generate momentum transfer
@@ -52,7 +56,7 @@ def dTedt(t, Te):
     elastic = - ne * (2 * me / M) * km * Ng * 1.5 * kB * (Te - Tg)
     inelastic = - ne * Ng * np.sum(Ae * dE)
     return source + elastic + inelastic
-           
+ 
 # Set the initial conditions
 # TODO: Make this a user setting
 N = initcond.equilibrium(dNdt(0.0)) * Ng

@@ -10,12 +10,15 @@ endif
 set shortmess=aoO
 badd +0 script.py
 badd +29 transcribe.py
-badd +0 settings.py
-badd +29 gases/helium/boltzmann.txt
-badd +60 solvers.py
+badd +4 settings.py
+badd +2714 gases/helium/boltzmann.txt
+badd +3 solvers.py
 badd +1 constants.py
+badd +34 matrixgen.py
+badd +1280 gases/helium/electronic.py
+badd +0 gases/helium/ralchenko.py
 silent! argdel *
-edit solvers.py
+edit settings.py
 set splitbelow splitright
 wincmd _ | wincmd |
 vsplit
@@ -34,13 +37,13 @@ set nosplitright
 wincmd t
 set winheight=1 winwidth=1
 exe '1resize ' . ((&lines * 29 + 30) / 61)
-exe 'vert 1resize ' . ((&columns * 89 + 89) / 178)
+exe 'vert 1resize ' . ((&columns * 88 + 89) / 178)
 exe '2resize ' . ((&lines * 29 + 30) / 61)
-exe 'vert 2resize ' . ((&columns * 89 + 89) / 178)
+exe 'vert 2resize ' . ((&columns * 88 + 89) / 178)
 exe '3resize ' . ((&lines * 29 + 30) / 61)
-exe 'vert 3resize ' . ((&columns * 88 + 89) / 178)
+exe 'vert 3resize ' . ((&columns * 89 + 89) / 178)
 exe '4resize ' . ((&lines * 29 + 30) / 61)
-exe 'vert 4resize ' . ((&columns * 88 + 89) / 178)
+exe 'vert 4resize ' . ((&columns * 89 + 89) / 178)
 argglobal
 setlocal fdm=manual
 setlocal fde=0
@@ -51,15 +54,15 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 61 - ((15 * winheight(0) + 14) / 29)
+let s:l = 11 - ((10 * winheight(0) + 14) / 29)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-61
+11
 normal! 04l
 wincmd w
 argglobal
-edit settings.py
+edit gases/helium/electronic.py
 setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -69,15 +72,15 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 4 - ((3 * winheight(0) + 14) / 29)
+let s:l = 2596 - ((5 * winheight(0) + 14) / 29)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-4
-normal! 064l
+2596
+normal! 011l
 wincmd w
 argglobal
-edit solvers.py
+edit gases/helium/ralchenko.py
 setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -87,12 +90,12 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 27 - ((15 * winheight(0) + 14) / 29)
+let s:l = 512 - ((28 * winheight(0) + 14) / 29)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-27
-normal! 026l
+512
+normal! 0
 wincmd w
 argglobal
 edit script.py
@@ -105,22 +108,22 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 51 - ((16 * winheight(0) + 14) / 29)
+let s:l = 52 - ((20 * winheight(0) + 14) / 29)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-51
-normal! 04l
+52
+normal! 0
 wincmd w
 4wincmd w
 exe '1resize ' . ((&lines * 29 + 30) / 61)
-exe 'vert 1resize ' . ((&columns * 89 + 89) / 178)
+exe 'vert 1resize ' . ((&columns * 88 + 89) / 178)
 exe '2resize ' . ((&lines * 29 + 30) / 61)
-exe 'vert 2resize ' . ((&columns * 89 + 89) / 178)
+exe 'vert 2resize ' . ((&columns * 88 + 89) / 178)
 exe '3resize ' . ((&lines * 29 + 30) / 61)
-exe 'vert 3resize ' . ((&columns * 88 + 89) / 178)
+exe 'vert 3resize ' . ((&columns * 89 + 89) / 178)
 exe '4resize ' . ((&lines * 29 + 30) / 61)
-exe 'vert 4resize ' . ((&columns * 88 + 89) / 178)
+exe 'vert 4resize ' . ((&columns * 89 + 89) / 178)
 tabnext 1
 if exists('s:wipebuf')
   silent exe 'bwipe ' . s:wipebuf

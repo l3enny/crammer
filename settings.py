@@ -8,7 +8,7 @@ EN = 3e-18 * 1e-4                    # reduced electric field, V m^2
 #  Physical system options (user-defined)
 Te = 1.0 * q                         # effective electron temperature, J
 Ng = Na * 8.314 * Tg/P               # neutral gas density, 1/m^3
-E = EN/Ng
+E0 = EN/Ng
 
 # WARNING: This value is worthless for the current equilibrium solver
 ne = 1e5 * 1e6                       # background electron density, 1/m^3
