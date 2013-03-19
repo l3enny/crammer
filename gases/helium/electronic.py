@@ -1,4 +1,5 @@
 from constants import *
+import ralchenko
 import numpy as np
 from scipy.interpolate import UnivariateSpline
 
@@ -2589,9 +2590,15 @@ def rates(Te, istate, fstate):
     if all([Te > i for i in Tsim]) or all([Te < i for i in Tsim]):
         print("WARNING: Temperature outside calculation boundary,"
               " extrapolating.")
+    # Catch cases not covered by Kushner's simulation, and approximate
+    # population of upper states so for emission tracking
+    if istate.__class__ is int and (istate >= 300 and istate < 413):
+        pass
     try:
         fval = np.array([i[istate][fstate] for i in forward])
     except KeyError:
+        if istate == 300:
+            pass
         fval = np.array([0.0] * len(Tsim))
     try:
         rval = np.array([i[istate][fstate] for i in reverse])

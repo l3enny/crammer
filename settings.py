@@ -1,7 +1,7 @@
 from constants import *
 
 # Unnecessary, but convenient values
-Tg = 300                             # neutral gas temperature, K
+Tg = 300 * kB                        # neutral gas temperature, J
 P = 10.0 * 133.322                   # neutral gas pressure, Pa
 EN = 3e-18 * 1e-4                    # reduced electric field, V m^2
 

@@ -11,23 +11,44 @@ import numpy as N
 
 import rate
 
-def electronic(gas, f, Te):
+def electronic(gas, Te):
     states = gas.states.states
-    order = sorted(states.keys(), key=lambda state:states[state]['E'])
+    order = sorted(states.keys(), key=lambda state:states[state['E']])
     dim = len(states)
     mat = N.zeros((dim, dim))
     for i in range(dim):
-        gi = states[order[i]]['g']
-        Ei = states[order[i]]['E']
-        for j in range(i + 1, dim):
-            gf = states[order[j]]['g']
-            Ef = states[order[j]]['E']
-            transition = gas.electronic.Transition(order[i], order[j])
-            down = rate.rate(transition, f)
-            mat[j, i] = down
-            mat[i, j] = down * (gf/gi) * N.exp((Ei - Ef)/Te)
-        mat[i, i] = -sum(mat[:,i])
+        for f in range(dim):
+            mat[i, j] = gas.rates(Te, order[i], order[f])
     return mat
+
+def km(gas, Te):
+    states = gas.states.states
+    order = sorted(states.keys(), key=lambda state:states[state['E']])
+    dim = len(states)
+    km = []
+    for i in range(dim):
+        km.append(gas.rates(Te, order[i], 'elastic'))
+    return sum(km)
+
+#TODO: If this mode is reimplemented move the super-elastic code to
+#      either the cross section tables, or to a helper file
+#def electronic(gas, f, Te):
+#    states = gas.states.states
+#    order = sorted(states.keys(), key=lambda state:states[state]['E'])
+#    dim = len(states)
+#    mat = N.zeros((dim, dim))
+#    for i in range(dim):
+#        gi = states[order[i]]['g']
+#        Ei = states[order[i]]['E']
+#        for j in range(i + 1, dim):
+#            gf = states[order[j]]['g']
+#            Ef = states[order[j]]['E']
+#            transition = gas.electronic.Transition(order[i], order[j])
+#            down = rate.rate(transition, f)
+#            mat[j, i] = down
+#            mat[i, j] = down * (gf/gi) * N.exp((Ei - Ef)/Te)
+#        mat[i, i] = -sum(mat[:,i])
+#    return mat
 
 def optical(gas):
     states = gas.states.states
@@ -49,4 +70,4 @@ def atomic(gas):
         for j in range(dim):
             mat[j, i] = gas.atomic.K(order[i], order[j])
         mat[i, i] = -sum(mat[:, i])
-        return mat
+    return mat

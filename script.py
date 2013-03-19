@@ -33,57 +33,49 @@ states = gas.states.states
 order = sorted(states.keys(), key=lambda state:states[state]['E'])
 
 # Generate steady state transition matrices and radiation matrix
-Ae = matrixgen.electronic(gas, dist, Te)
 Ao = matrixgen.optical(gas)
+dE = solvers.dE(states, order)
 
 # Define the rate equation
 # TODO: Should this be a user setting as well?
-def dNdt(t):
+def dNdt(t, N):
     # Atomic populations equation
     ne = N[-1] # ensure quasi-neutrality, assumes ion is last state
-    return Ae*ne + Ao
+    return np.dot(Ae*ne + Ao, N)
 
-def dTedt(t):
+def dTedt(t, Te):
     # Electron energy equation
     ne = N[-1] # ensure quasi-neutrality, assumes ion is last state
-    return q**2 * ne * E**2 / (me * km * Ng) \
-           - ne * (2 * me / M) * km * Ng * 1.5 * kB * (Te - Tg) \
-           - ne * Ng * ki * dEi
-
+    Ae = matrixgen.electronic(gas, Te)      # Generate electron rates
+    km = matrixgen.km(gas, Te)              # Generate momentum transfer
+    source = q**2 * ne * E**2 / (me * km * Ng)
+    elastic = - ne * (2 * me / M) * km * Ng * 1.5 * kB * (Te - Tg)
+    inelastic = - ne * Ng * np.sum(Ae * dE)
+    return source + elastic + inelastic
+           
 # Set the initial conditions
 # TODO: Make this a user setting
 N = initcond.equilibrium(dNdt(0.0)) * Ng
-
-# Function to append emissions values for each time step
-def rad(A, N, dt):
-    emits = np.array([])
-    for row in range(A.shape[0] - 1):
-        i = row + 1
-        emits = np.append(emits, A[row][i:] * N[i:] * dt)
-    return emits
     
 # Initialize solution arrays
-Arad = Ao.clip(min=0)
+Arad = Ao.clip(min=0)   # Removes depopulation component
 errors = [0.0]
 populations = [N]
 times = [0.0]
-emissions = [np.zeros(np.count_nonzero(Arad))]
+emissions = [np.zeros(Arad.shape)]
 
 # Initialize solver and evolve states over time
-dNdt = solvers.rkf45(dNdt, times[0], populations[0], hmax, hmin, TOL)
-dTdt = solvers.rk4(dTdt, times[0], populations[0], hmax, hmin, TOL)
+stepper = solvers.rkf45(dNdt, times[0], populations[0], hmax, hmin, TOL)
 start = datetime.now()
 while times[-1] < T:
     k = rates()
-    N, dt, eps = dNdt.next()  # Step to next value with generator function
-    Te = solvers.rk4(dTedt, times[-1], y, dt)
+    N, dt, eps = stepper.next()  # Step to next value with generator function
+    Te = solvers.rk4(dTedt, times[-1], y, dt) # Advance with same time step
     # Using python lists, append is much faster than NumPy equivalent
-    emissions.append(rad(Arad, N, t - times[-1]))
+    emissions.append(Arad * N * dt) #TODO: Verify that this works!
     populations.append(N)
     times.append(t)
     errors.append(eps)
-    if 'ion' in states:
-        ne = N[-1]  # increase electron density to account for ionization
 
     # Output some useful information every 1000 steps
     if len(times)%1000 == 0:
@@ -92,8 +84,8 @@ while times[-1] < T:
         print "Elapsed time:", times[-1]
         print "Simulation Time:", (end - start), "\n"
 
-# Generate all emission wavelengths
+# Generate all emission wavelengths in the proper order
 wavelengths = solvers.wavelengths(states, order)
-# Move populations to an array for proper output
+# Move populations to an array for proper output (is this necessary?)
 populations = np.array(populations)
 handler.save([times, populations, errors, emissions, wavelengths], prefix)
