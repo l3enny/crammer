@@ -2,11 +2,10 @@ from constants import *
 import numpy as np
 from scipy.interpolate import UnivariateSpline
 
-Tsim = [2.430e-1, 3.623e-1, 6.582e-1, 1.262e+0, 1.902e+0, 2.604e+1, 4.212e+0,
+Tsim = np.array([2.430e-1, 3.623e-1, 6.582e-1, 1.262e+0, 1.902e+0, 2.604e+0, 4.212e+0,
         6.282e+0, 6.767e+0, 7.070e+0, 7.498e+0, 8.155e+0, 8.738e+0, 9.297e+0,
         9.847e+0, 1.095e+1, 1.210e+1, 1.362e+1, 1.527e+1, 1.716e+1, 1.931e+1,
-        2.235e+1, 2.727e+1]
-Tsim = [i*q for i in Tsim]
+        2.235e+1, 2.727e+1]) * q
 
 forward = [ {100:{'elastic':1.601e-08,
                         210:1.164e-14,
@@ -2591,13 +2590,27 @@ def rates(Te, istate, fstate):
         print("WARNING: Temperature outside calculation boundary,"
               " extrapolating.")
     try:
-        fval = [i[istate][fstate] for i in forward]
+        fval = np.array([i[istate][fstate] for i in forward])
     except KeyError:
-        fval = [0.0] * len(Tsim)
+        fval = np.array([0.0] * len(Tsim))
     try:
-        rval = [i[istate][fstate] for i in reverse]
+        rval = np.array([i[istate][fstate] for i in reverse])
     except KeyError:
-        rvale = [0.0] * len(Tsim)
-    interpf = UnivariateSpline(Tsim, fval, k=1, s=0)
-    interpr = UnivariateSpline(Tsim, rval, k=1, s=0)
-    return interpf, interpr
+        rval = np.array([0.0] * len(Tsim))
+    interpf = UnivariateSpline(np.array(Tsim), fval, s=0)
+    interpr = UnivariateSpline(np.array(Tsim), rval, s=0)
+    return interpf(Te), interpr(Te)
+
+def test():
+    import matplotlib.pyplot as plt
+    fval = np.array([i[211][201] for i in forward])
+    print Tsim
+    print fval
+    plt.plot(Tsim, fval, '.')
+    plt.hold(True)
+    T = np.linspace(min(Tsim), max(Tsim))
+    sval = []
+    for val in T:
+        sval.append(rates(val, 211, 201)[0])
+    plt.plot(T, sval, '-r')
+    plt.show()
