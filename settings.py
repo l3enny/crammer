@@ -1,14 +1,14 @@
 from constants import *
-import distributions
 
 # Unnecessary, but convenient values
 Tg = 300                             # neutral gas temperature, K
 P = 10.0 * 133.322                   # neutral gas pressure, Pa
+EN = 3e-18 * 1e-4                    # reduced electric field, V m^2
 
 #  Physical system options (user-defined)
 Te = 1.0 * q                         # effective electron temperature, J
-dist = distributions.drumax(0.5, Te) # load EEDF
 Ng = Na * 8.314 * Tg/P               # neutral gas density, 1/m^3
+E = EN/Ng
 
 # WARNING: This value is worthless for the current equilibrium solver
 ne = 1e5 * 1e6                       # background electron density, 1/m^3

@@ -19,7 +19,6 @@ from constants import *     # Useful elementary constants
 import handler              # Input/output handling
 import initcond             # Helpful functions for initial conditions
 import matrixgen            # Generates the rate matrices
-import rate                 # Determines reaction rates
 import solvers              # Handles general state calculations
 
 # User-specified options
