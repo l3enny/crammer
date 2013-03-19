@@ -40,18 +40,19 @@ Ao = matrixgen.optical(gas)
 # TODO: Should this be a user setting as well?
 def dNdt(t):
     # Atomic populations equation
+    ne = N[-1] # ensure quasi-neutrality, assumes ion is last state
     return Ae*ne + Ao
 
-def dTdt(t):
+def dTedt(t):
     # Electron energy equation
-    return q**2 * ne * E**2 / (me * km * N) \
-           - ne * (2 * me / M) * km * N * 1.5 * kB * (Te - Tg) \
-           - ne * N * k * dE
+    ne = N[-1] # ensure quasi-neutrality, assumes ion is last state
+    return q**2 * ne * E**2 / (me * km * Ng) \
+           - ne * (2 * me / M) * km * Ng * 1.5 * kB * (Te - Tg) \
+           - ne * Ng * ki * dEi
 
 # Set the initial conditions
 # TODO: Make this a user setting
 N = initcond.equilibrium(dNdt(0.0)) * Ng
-ne = N[-1] # ensure quasi-neutrality, assumes ion is last state
 
 # Function to append emissions values for each time step
 def rad(A, N, dt):
@@ -70,12 +71,12 @@ emissions = [np.zeros(np.count_nonzero(Arad))]
 
 # Initialize solver and evolve states over time
 dNdt = solvers.rkf45(dNdt, times[0], populations[0], hmax, hmin, TOL)
-dTdt = solvers.rkf45(dTdt, times[0], populations[0], hmax, hmin, TOL)
+dTdt = solvers.rk4(dTdt, times[0], populations[0], hmax, hmin, TOL)
 start = datetime.now()
 while times[-1] < T:
     k = rates()
-    N, t, eps = dNdt.next()  # Step to next value with generator function
-    T, t, eps = dTdt.next()  # Step to next value with generator function
+    N, dt, eps = dNdt.next()  # Step to next value with generator function
+    Te = solvers.rk4(dTedt, times[-1], y, dt)
     # Using python lists, append is much faster than NumPy equivalent
     emissions.append(rad(Arad, N, t - times[-1]))
     populations.append(N)

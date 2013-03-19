@@ -34,15 +34,11 @@ def wavelengths(states, order):
 # 
 
 def rk4(f, x, y, h):
-    
-    def k(f, x, y):
-        k1 = h * f(x, y)
-        k2 = h * f(x + 0.5*h, y + 0.5*k1)
-        k3 = h * f(x + 0.5*h, y + 0.5*k2)
-        k4 = h * f(x + h, y + k3)
-        return k1, k2, k3, k4
-    while True:
-        yield y + k1/6 + k2/3 + k3/3 + k4/6
+    k1 = h * f(x, y)
+    k2 = h * f(x + 0.5*h, y + 0.5*k1)
+    k3 = h * f(x + 0.5*h, y + 0.5*k2)
+    k4 = h * f(x + h, y + k3)
+    return y + k1/6 + k2/3 + k3/3 + k4/6
 
 def rkf45(dfdt, t0, y0, hmax, hmin, TOL, fixed=False):
     """
@@ -83,7 +79,7 @@ def rkf45(dfdt, t0, y0, hmax, hmin, TOL, fixed=False):
             y = y + (16./135)*k1 + (6656./12825)*k3 + (28561./56430)*k4 \
                   - (9./50)*k5 + (2./55)*k6
             t += h
-            yield y, t, eps
+            yield y, h, eps
         q = 0.84 * (TOL/eps)**0.25
         q = min(4.0, max(q, 0.1))
         h = min(q * h, hmax)
