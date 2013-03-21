@@ -8,15 +8,18 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   let s:wipebuf = bufnr('%')
 endif
 set shortmess=aoO
-badd +0 script.py
+badd +42 script.py
 badd +29 transcribe.py
-badd +4 settings.py
-badd +2714 gases/helium/boltzmann.txt
-badd +3 solvers.py
+badd +14 settings.py
+badd +91 gases/helium/boltzmann.txt
+badd +50 solvers.py
 badd +1 constants.py
-badd +34 matrixgen.py
-badd +1280 gases/helium/electronic.py
-badd +0 gases/helium/ralchenko.py
+badd +41 matrixgen.py
+badd +696 gases/helium/electronic.py
+badd +533 gases/helium/ralchenko.py
+badd +9 gases/helium/states.py
+badd +16 initcond.py
+badd +12 handler.py
 silent! argdel *
 edit settings.py
 set splitbelow splitright
@@ -54,48 +57,12 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 11 - ((10 * winheight(0) + 14) / 29)
+let s:l = 23 - ((22 * winheight(0) + 14) / 29)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-11
-normal! 04l
-wincmd w
-argglobal
-edit gases/helium/electronic.py
-setlocal fdm=manual
-setlocal fde=0
-setlocal fmr={{{,}}}
-setlocal fdi=#
-setlocal fdl=0
-setlocal fml=1
-setlocal fdn=20
-setlocal fen
-silent! normal! zE
-let s:l = 2596 - ((5 * winheight(0) + 14) / 29)
-if s:l < 1 | let s:l = 1 | endif
-exe s:l
-normal! zt
-2596
-normal! 011l
-wincmd w
-argglobal
-edit gases/helium/ralchenko.py
-setlocal fdm=manual
-setlocal fde=0
-setlocal fmr={{{,}}}
-setlocal fdi=#
-setlocal fdl=0
-setlocal fml=1
-setlocal fdn=20
-setlocal fen
-silent! normal! zE
-let s:l = 512 - ((28 * winheight(0) + 14) / 29)
-if s:l < 1 | let s:l = 1 | endif
-exe s:l
-normal! zt
-512
-normal! 0
+23
+normal! 09l
 wincmd w
 argglobal
 edit script.py
@@ -108,14 +75,51 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 52 - ((20 * winheight(0) + 14) / 29)
+let s:l = 60 - ((10 * winheight(0) + 14) / 29)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-52
+60
+normal! 042l
+wincmd w
+argglobal
+edit constants.py
+setlocal fdm=manual
+setlocal fde=0
+setlocal fmr={{{,}}}
+setlocal fdi=#
+setlocal fdl=0
+setlocal fml=1
+setlocal fdn=20
+setlocal fen
+silent! normal! zE
+let s:l = 17 - ((16 * winheight(0) + 14) / 29)
+if s:l < 1 | let s:l = 1 | endif
+exe s:l
+normal! zt
+17
 normal! 0
 wincmd w
-4wincmd w
+argglobal
+edit gases/helium/electronic.py
+setlocal fdm=manual
+setlocal fde=0
+setlocal fmr={{{,}}}
+setlocal fdi=#
+setlocal fdl=0
+setlocal fml=1
+setlocal fdn=20
+setlocal fen
+silent! normal! zE
+let s:l = 2590 - ((12 * winheight(0) + 14) / 29)
+if s:l < 1 | let s:l = 1 | endif
+exe s:l
+normal! zt
+2590
+normal! 0
+lcd ~/Repos/crammer
+wincmd w
+2wincmd w
 exe '1resize ' . ((&lines * 29 + 30) / 61)
 exe 'vert 1resize ' . ((&columns * 88 + 89) / 178)
 exe '2resize ' . ((&lines * 29 + 30) / 61)
