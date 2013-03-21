@@ -43,7 +43,7 @@ def dNdt(t, N):
     ne = N[-1] # ensure quasi-neutrality, assumes ion is last state
     return np.dot(Ae*ne + Ao, N)
 
-dE = solvers.dE(gas)
+dE = solvers.dE(states, order)
 def dTedt(t, Te):
     # Electron energy equation
     if t < 1e-9:
@@ -72,12 +72,12 @@ stepper = solvers.rkf45(dNdt, times[0], populations[0], hmax, hmin, TOL)
 start = datetime.now()
 while times[-1] < T:
     N, dt, eps = stepper.next()  # Step to next value with generator function
-    Te = solvers.rk4(dTedt, times[-1], y, dt) # Advance with same time step
+    Te = solvers.rk4(dTedt, times[-1], Te, dt) # Advance with same time step
 
     # Using python lists, append is much faster than NumPy equivalent
     emissions.append(Arad * N * dt) #TODO: Verify that this works!
     populations.append(N)
-    times.append(t)
+    times.append(times[-1] + dt)
     errors.append(eps)
 
     # Regenerate temperature-dependent quantities
