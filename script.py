@@ -35,9 +35,12 @@ order = sorted(states.keys(), key=lambda state:states[state]['E'])
 # Define rate equations and associated quantities
 
 # Initial transition matrix conditions
+# Set the initial conditions
+# TODO: Make this a user setting
 Ao = matrixgen.optical(gas)
 Ae = matrixgen.electronic(gas, Te)      # Generate electron rates
 km = matrixgen.km(gas, Te)              # Generate momentum transfer
+N = initcond.equilibrium(Ae*ne + Ao)
 def dNdt(t, N):
     # Atomic populations equation
     ne = N[-1] # ensure quasi-neutrality, assumes ion is last state
@@ -52,20 +55,22 @@ def dTedt(t, Te):
         E = 0
     ne = N[-1] # ensure quasi-neutrality, assumes ion is last state
     source = q**2 * ne * E**2 / (me * km * Ng)
+    print "E0 =", E0
+    print "source =", source
     elastic = - ne * (2 * me / M) * km * Ng * 1.5 * kB * (Te - Tg)
     inelastic = - ne * Ng * np.sum(Ae * dE)
     return source + elastic + inelastic
  
-# Set the initial conditions
-# TODO: Make this a user setting
-N = initcond.equilibrium(Ae*ne + Ao)
-    
+print "dTe/dt = ", dTedt(0.0, 0.3*q)
+raw_input('')
+
 # Initialize solution arrays
 Arad = Ao.clip(min=0)   # Removes depopulation component
 errors = [0.0]
 populations = [N]
 times = [0.0]
 emissions = [np.zeros(Arad.shape)]
+temperatures = [Te]
 
 # Solution loop
 stepper = solvers.rkf45(dNdt, times[0], populations[0], hmax, hmin, TOL)
@@ -79,6 +84,7 @@ while times[-1] < T:
     populations.append(N)
     times.append(times[-1] + dt)
     errors.append(eps)
+    temperatures.append(Te)
 
     # Regenerate temperature-dependent quantities
     Ae = matrixgen.electronic(gas, Te)
@@ -90,11 +96,13 @@ while times[-1] < T:
         print "%g steps" % len(times)
         print "Elapsed time:", times[-1]
         print "Simulation Time:", (end - start), "\n"
-
-# Output
+        print "dTe =", Te - temperatures[-2]
 
 # Generate all emission wavelengths in the proper order
 wavelengths = solvers.wavelengths(states, order)
 # Move populations to an array for proper output (is this necessary?)
 populations = np.array(populations)
-handler.save([times, populations, errors, emissions, wavelengths], prefix)
+names = ['times', 'populations', 'errors', 'wavelengths', 
+         'temperatures', 'emissions']
+data =  [times, populations, errors, wavelengths, temperatures, emissions]
+handler.save(data, names, prefix)
