@@ -2587,9 +2587,12 @@ reverse = [ {100:{'elastic':0.000E+00,
                       'ion':0.000E+00}}]
 
 def rates(Te, istate, fstate):
-    if all([Te > i for i in Tsim]) or all([Te < i for i in Tsim]):
-        print("WARNING: Temperature outside calculation boundary,"
-              " extrapolating.")
+    #if all([Te > i for i in Tsim]):
+    #    print("WARNING: Temperature above calculation boundary,"
+    #          " extrapolating.")
+    #if all([Te < i for i in Tsim]):
+    #    print("WARNING: Temperature below calculation boundary,"
+    #          " extrapolating.")
     # Catch cases not covered by Kushner's simulation, and approximate
     # population of upper states so for emission tracking
     if istate.__class__ is int and (istate >= 300 and istate < 413):

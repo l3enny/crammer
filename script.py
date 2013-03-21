@@ -41,6 +41,7 @@ Ao = matrixgen.optical(gas)
 Ae = matrixgen.electronic(gas, Te)      # Generate electron rates
 km = matrixgen.km(gas, Te)              # Generate momentum transfer
 N = initcond.equilibrium(Ae*ne + Ao)
+ne = N[-1]
 def dNdt(t, N):
     # Atomic populations equation
     ne = N[-1] # ensure quasi-neutrality, assumes ion is last state
@@ -55,14 +56,15 @@ def dTedt(t, Te):
         E = 0
     ne = N[-1] # ensure quasi-neutrality, assumes ion is last state
     source = q**2 * ne * E**2 / (me * km * Ng)
-    print "E0 =", E0
-    print "source =", source
-    elastic = - ne * (2 * me / M) * km * Ng * 1.5 * kB * (Te - Tg)
+    elastic = - ne * (2 * me / M) * km * Ng * 1.5 * kB * (Te - Tg*kB)
     inelastic = - ne * Ng * np.sum(Ae * dE)
+    print "source =", source
+    print "elastic=", elastic
+    print "inelastic=", inelastic 
     return source + elastic + inelastic
- 
-print "dTe/dt = ", dTedt(0.0, 0.3*q)
-raw_input('')
+
+print "ne =", ne
+print "ni =", N[-1]
 
 # Initialize solution arrays
 Arad = Ao.clip(min=0)   # Removes depopulation component
