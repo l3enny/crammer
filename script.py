@@ -32,17 +32,18 @@ from gases import helium as gas      # choose gas to simulate
 states = gas.states.states
 order = sorted(states.keys(), key=lambda state:states[state]['E'])
 
-# Generate steady state transition matrices and radiation matrix
-Ao = matrixgen.optical(gas)
-dE = solvers.dE(states, order)
+# Define rate equations and associated quantities
 
-# Define the rate equation
-# TODO: Should this be a user setting as well?
+# Initial transition matrix conditions
+Ao = matrixgen.optical(gas)
+Ae = matrixgen.electronic(gas, Te)      # Generate electron rates
+km = matrixgen.km(gas, Te)              # Generate momentum transfer
 def dNdt(t, N):
     # Atomic populations equation
     ne = N[-1] # ensure quasi-neutrality, assumes ion is last state
     return np.dot(Ae*ne + Ao, N)
 
+dE = solvers.dE(gas)
 def dTedt(t, Te):
     # Electron energy equation
     if t < 1e-9:
@@ -50,8 +51,6 @@ def dTedt(t, Te):
     else:
         E = 0
     ne = N[-1] # ensure quasi-neutrality, assumes ion is last state
-    Ae = matrixgen.electronic(gas, Te)      # Generate electron rates
-    km = matrixgen.km(gas, Te)              # Generate momentum transfer
     source = q**2 * ne * E**2 / (me * km * Ng)
     elastic = - ne * (2 * me / M) * km * Ng * 1.5 * kB * (Te - Tg)
     inelastic = - ne * Ng * np.sum(Ae * dE)
@@ -59,7 +58,7 @@ def dTedt(t, Te):
  
 # Set the initial conditions
 # TODO: Make this a user setting
-N = initcond.equilibrium(dNdt(0.0)) * Ng
+N = initcond.equilibrium(Ae*ne + Ao)
     
 # Initialize solution arrays
 Arad = Ao.clip(min=0)   # Removes depopulation component
@@ -68,18 +67,22 @@ populations = [N]
 times = [0.0]
 emissions = [np.zeros(Arad.shape)]
 
-# Initialize solver and evolve states over time
+# Solution loop
 stepper = solvers.rkf45(dNdt, times[0], populations[0], hmax, hmin, TOL)
 start = datetime.now()
 while times[-1] < T:
-    k = rates()
     N, dt, eps = stepper.next()  # Step to next value with generator function
     Te = solvers.rk4(dTedt, times[-1], y, dt) # Advance with same time step
+
     # Using python lists, append is much faster than NumPy equivalent
     emissions.append(Arad * N * dt) #TODO: Verify that this works!
     populations.append(N)
     times.append(t)
     errors.append(eps)
+
+    # Regenerate temperature-dependent quantities
+    Ae = matrixgen.electronic(gas, Te)
+    km = matrixgen.km(gas, Te)
 
     # Output some useful information every 1000 steps
     if len(times)%1000 == 0:
@@ -87,6 +90,8 @@ while times[-1] < T:
         print "%g steps" % len(times)
         print "Elapsed time:", times[-1]
         print "Simulation Time:", (end - start), "\n"
+
+# Output
 
 # Generate all emission wavelengths in the proper order
 wavelengths = solvers.wavelengths(states, order)
