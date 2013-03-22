@@ -22,7 +22,7 @@ import matrixgen            # Generates the rate matrices
 import solvers              # Handles general state calculations
 
 # User-specified options
-from kushner import *               # load user settings file
+from settings.kushner import *       # load user settings file
 from gases import helium as gas      # choose gas to simulate
 
 
