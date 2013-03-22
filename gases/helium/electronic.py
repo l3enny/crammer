@@ -3,10 +3,10 @@ import ralchenko
 import numpy as np
 from scipy.interpolate import UnivariateSpline
 
-Tsim = np.array([2.430e-1, 3.623e-1, 6.582e-1, 1.262e+0, 1.902e+0, 2.604e+0,
-4.212e+0, 6.282e+0, 6.767e+0, 7.070e+0, 7.498e+0, 8.155e+0, 8.738e+0, 9.297e+0,
-9.847e+0, 1.095e+1, 1.210e+1, 1.362e+1, 1.527e+1, 1.716e+1, 1.931e+1, 2.235e+1,
-2.727e+1]) * q
+Tsim = np.array([1.620e-1, 2.415e-1, 4.388e-1, 8.413e-1, 1.268e+0, 1.736e+0,
+2.808e+0, 4.188e+0, 4.511e+0, 4.713e+0, 4.999e+0, 5.437e+0, 5.825e+0, 6.198e+0,
+6.565e+0, 7.301e+0, 8.064e+0, 9.079e+0, 1.018e+1, 1.144e+1, 1.287e+1, 1.490e+1,
+1.818e+1]) * q
 
 forward = [ {100:{'elastic':1.601e-08,
                         210:1.164e-14,
@@ -2595,13 +2595,10 @@ def rates(Te, istate, fstate):
     #          " extrapolating.")
     # Catch cases not covered by Kushner's simulation, and approximate
     # population of upper states so for emission tracking
-    if istate.__class__ is int and (istate >= 300 and istate < 413):
-        pass
     try:
         fval = np.array([i[istate][fstate] for i in forward])
     except KeyError:
-        if istate == 300:
-            pass
+        
         fval = np.array([0.0] * len(Tsim))
     try:
         rval = np.array([i[istate][fstate] for i in reverse])
