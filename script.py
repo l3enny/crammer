@@ -22,7 +22,7 @@ import matrixgen            # Generates the rate matrices
 import solvers              # Handles general state calculations
 
 # User-specified options
-from settings import *               # load user settings file
+from kushner import *               # load user settings file
 from gases import helium as gas      # choose gas to simulate
 
 
@@ -44,27 +44,22 @@ N = initcond.equilibrium(Ae*ne + Ao)
 ne = N[-1]
 def dNdt(t, N):
     # Atomic populations equation
-    ne = N[-1] # ensure quasi-neutrality, assumes ion is last state
     return np.dot(Ae*ne + Ao, N)
 
 dE = solvers.dE(states, order)
 def dTedt(t, Te):
     # Electron energy equation
-    if t < 1e-9:
+    if t < tau:
         E = E0
     else:
         E = 0
-    ne = N[-1] # ensure quasi-neutrality, assumes ion is last state
     source = q**2 * ne * E**2 / (me * km * Ng)
     elastic = - ne * (2 * me / M) * km * Ng * 1.5 * kB * (Te - Tg*kB)
-    inelastic = - ne * Ng * np.sum(Ae * dE)
-    print "source =", source
-    print "elastic=", elastic
-    print "inelastic=", inelastic 
+    inelastic = - ne * np.sum(np.dot(Ae, N) * dE)
+#    print "source =", source
+#    print "elastic=", elastic
+#    print "inelastic=", inelastic, '\n'
     return source + elastic + inelastic
-
-print "ne =", ne
-print "ni =", N[-1]
 
 # Initialize solution arrays
 Arad = Ao.clip(min=0)   # Removes depopulation component
@@ -78,6 +73,7 @@ temperatures = [Te]
 stepper = solvers.rkf45(dNdt, times[0], populations[0], hmax, hmin, TOL)
 start = datetime.now()
 while times[-1] < T:
+    ne = N[-1]
     N, dt, eps = stepper.next()  # Step to next value with generator function
     Te = solvers.rk4(dTedt, times[-1], Te, dt) # Advance with same time step
 
@@ -96,9 +92,9 @@ while times[-1] < T:
     if len(times)%1000 == 0:
         end = datetime.now()
         print "%g steps" % len(times)
+        print "dTe =", Te - temperatures[-2]
         print "Elapsed time:", times[-1]
         print "Simulation Time:", (end - start), "\n"
-        print "dTe =", Te - temperatures[-2]
 
 # Generate all emission wavelengths in the proper order
 wavelengths = solvers.wavelengths(states, order)
