@@ -6,7 +6,7 @@ P = 2.0 * 133.322                    # neutral gas pressure, Pa
 EN = 2.66e-15 * 1e-4                 # reduced electric field, V m^2
 
 #  Physical system options (user-defined)
-Te = 1.818e1 * q                     # effective electron temperature, J
+Te = 1.818e1 * q / kB                # effective electron temperature, K
 Ng = P/(kB*Tg)
 E0 = EN * Ng                         # The applied electric field
 tau = 0

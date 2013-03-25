@@ -54,12 +54,12 @@ def dTedt(t, Te):
     else:
         E = 0
     source = q**2 * ne * E**2 / (me * km * Ng)
-    elastic = - ne * (2 * me / M) * km * Ng * 1.5 * kB * (Te - Tg*kB)
-    inelastic = - ne * np.sum(np.dot(Ae, N) * dE)
-#    print "source =", source
-#    print "elastic=", elastic
-#    print "inelastic=", inelastic, '\n'
-    return source + elastic + inelastic
+    elastic = - ne * (2 * me / M) * km * Ng * 1.5 * kB * (Te - Tg)
+    inelastic = - ne * Ng * np.sum(np.dot(Ae, N) * dE)
+    print "source =", source
+    print "elastic=", elastic
+    print "inelastic=", inelastic, '\n'
+    return (source + elastic + inelastic) * (2/3) / (kB * ne)
 
 # Initialize solution arrays
 Arad = Ao.clip(min=0)   # Removes depopulation component
