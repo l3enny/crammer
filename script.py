@@ -37,9 +37,8 @@ order = sorted(states.keys(), key=lambda state:states[state]['E'])
 # Set the initial conditions
 # TODO: Make this a user setting
 Ao = matrixgen.optical(gas)
-print "Ao:", Ao
 Ae = matrixgen.electronic(gas, Te)      # Generate electron rates
-km = matrixgen.km(gas, Te)              # Generate momentum transfer
+km = matrixgen.km(gas, Te) * Ng * ne    # Generate momentum transfer
 def dNdt(t, N):
     # Atomic populations equation
     return np.dot(Ae*ne + Ao, N)
@@ -51,14 +50,16 @@ def dTedt(t, Te):
         E = E0
     else:
         E = 0
+    print "km =", km
     source = q**2 * ne * E**2 / (me * km * Ng)
-    elastic = - ne * (2 * me / M) * km * Ng * 1.5 * kB * (Te - Tg)
+    elastic = - km * (2 * me / M) * 1.5 * kB * (Te - Tg)
+    print "N =", N
     inelastic = - ne * np.sum(np.dot(Ae, N) * dE)
     delta = (source + elastic + inelastic) * (2./3) / (kB * ne)
     print "source =", source
     print "elastic=", elastic
-    print "inelastic=", inelastic, '\n'
-    print "delta =", delta
+    print "inelastic=", inelastic
+    print "delta =", delta, '\n'
     raw_input('')
     return delta
 
@@ -90,7 +91,8 @@ temperatures = [Te]
 start = datetime.now()
 while times[-1] < T:
     ne = N[-1]
-    N = solvers.rk4(dNdt, times[-1], N, dt)
+    N = solvers.rk4(dNdt, times[-1], N, dt).clip(min=0)
+    print "N =", N
     #N, dt, eps = stepper.next()  # Step to next value with generator function
     Te = solvers.rk4(dTedt, times[-1], Te, dt) # Advance with same time step
     # Using python lists, append is much faster than NumPy equivalent
@@ -102,7 +104,7 @@ while times[-1] < T:
 
     # Regenerate temperature-dependent quantities
     Ae = matrixgen.electronic(gas, Te)
-    km = matrixgen.km(gas, Te)
+    km = matrixgen.km(gas, Te) * Ng * ne
 
     # Output some useful information every 1000 steps
     if len(times)%1000 == 0:
