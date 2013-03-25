@@ -12,10 +12,10 @@ badd +80 script.py
 badd +29 transcribe.py
 badd +10 settings.py
 badd +2664 gases/helium/boltzmann.txt
-badd +50 solvers.py
-badd +1 constants.py
+badd +1 solvers.py
+badd +15 constants.py
 badd +41 matrixgen.py
-badd +696 gases/helium/electronic.py
+badd +2575 gases/helium/electronic.py
 badd +548 gases/helium/ralchenko.py
 badd +9 gases/helium/states.py
 badd +16 initcond.py
@@ -23,10 +23,12 @@ badd +12 handler.py
 badd +10 sandia.py
 badd +1 kushner.py
 badd +26 settings/kushner.py
-badd +25 gases/helium/rate.py
+badd +22 gases/helium/rate.py
 badd +17 distributions.py
+badd +0 settings/sandia.py
+badd +0 gases/helium/km.py
 silent! argdel *
-edit gases/helium/rate.py
+edit gases/helium/boltzmann.txt
 set splitbelow splitright
 wincmd _ | wincmd |
 vsplit
@@ -62,15 +64,15 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 22 - ((21 * winheight(0) + 17) / 35)
+let s:l = 117 - ((17 * winheight(0) + 17) / 35)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-22
-normal! 036l
+117
+normal! 010l
 wincmd w
 argglobal
-edit solvers.py
+edit gases/helium/km.py
 setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -80,12 +82,12 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 1 - ((0 * winheight(0) + 17) / 34)
+let s:l = 5 - ((4 * winheight(0) + 17) / 34)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-1
-normal! 0
+5
+normal! 036l
 wincmd w
 argglobal
 edit script.py
@@ -98,15 +100,15 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 103 - ((34 * winheight(0) + 17) / 35)
+let s:l = 54 - ((19 * winheight(0) + 17) / 35)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-103
-normal! 0
+54
+normal! 042l
 wincmd w
 argglobal
-edit gases/helium/electronic.py
+edit settings/sandia.py
 setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -116,15 +118,15 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 2575 - ((15 * winheight(0) + 17) / 34)
+let s:l = 17 - ((16 * winheight(0) + 17) / 34)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-2575
-normal! 03l
+17
+normal! 030l
 lcd ~/Repos/crammer
 wincmd w
-2wincmd w
+4wincmd w
 exe '1resize ' . ((&lines * 35 + 36) / 72)
 exe 'vert 1resize ' . ((&columns * 104 + 103) / 207)
 exe '2resize ' . ((&lines * 34 + 36) / 72)
