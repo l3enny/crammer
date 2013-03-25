@@ -7,10 +7,11 @@ def equilibrium(A):
     # Values are normalized to the gas density.
     err = 1.0
     TOL = 1.0e-6
-    n = 0.0
+    n = 1.0
     while err > TOL:
         N = solvers.svd(A)
         err = abs(n - N[-1]) / N[-1]
         n = N[-1]
+        print "N =", N
     return N
 

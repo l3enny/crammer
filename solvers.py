@@ -45,10 +45,10 @@ def wavelengths(states, order):
 
 def rk4(f, x, y, h):
     # Simple fourth-order Runge-Kutta solver.
-    k1 = h * f(x, y)
+    k1 = h * f(x,         y)
     k2 = h * f(x + 0.5*h, y + 0.5*k1)
     k3 = h * f(x + 0.5*h, y + 0.5*k2)
-    k4 = h * f(x + h, y + k3)
+    k4 = h * f(x +     h, y +     k3)
     return y + k1/6 + k2/3 + k3/3 + k4/6
 
 def rkf45(f, t0, y0, hmax, hmin, TOL, fixed=False):
@@ -86,6 +86,7 @@ def rkf45(f, t0, y0, hmax, hmin, TOL, fixed=False):
         k1, k2, k3, k4, k5, k6, errors = k(f, t, y, h)
         rerrors = errors/y
         eps = np.max(abs(rerrors))
+        #print "eps =", eps
 
         if eps < TOL:
             y = y + (16./135)*k1 + (6656./12825)*k3 + (28561./56430)*k4 \

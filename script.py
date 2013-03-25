@@ -41,7 +41,7 @@ Ao = matrixgen.optical(gas)
 Ae = matrixgen.electronic(gas, Te)      # Generate electron rates
 km = matrixgen.km(gas, Te)              # Generate momentum transfer
 N = initcond.equilibrium(Ae*ne + Ao)
-ne = N[-1]
+ne = N[-1] * Ng
 def dNdt(t, N):
     # Atomic populations equation
     return np.dot(Ae*ne + Ao, N)
@@ -56,10 +56,13 @@ def dTedt(t, Te):
     source = q**2 * ne * E**2 / (me * km * Ng)
     elastic = - ne * (2 * me / M) * km * Ng * 1.5 * kB * (Te - Tg)
     inelastic = - ne * Ng * np.sum(np.dot(Ae, N) * dE)
-    print "source =", source
-    print "elastic=", elastic
-    print "inelastic=", inelastic, '\n'
-    return (source + elastic + inelastic) * (2/3) / (kB * ne)
+    delta = (source + elastic + inelastic) * (2./3) / (kB * ne)
+    #print "source =", source
+    #print "elastic=", elastic
+    #print "inelastic=", inelastic, '\n'
+    #print "delta =", delta
+    #raw_input('')
+    return delta
 
 # Initialize solution arrays
 Arad = Ao.clip(min=0)   # Removes depopulation component
@@ -73,10 +76,9 @@ temperatures = [Te]
 stepper = solvers.rkf45(dNdt, times[0], populations[0], hmax, hmin, TOL)
 start = datetime.now()
 while times[-1] < T:
-    ne = N[-1]
+    ne = N[-1] * Ng
     N, dt, eps = stepper.next()  # Step to next value with generator function
     Te = solvers.rk4(dTedt, times[-1], Te, dt) # Advance with same time step
-
     # Using python lists, append is much faster than NumPy equivalent
     emissions.append(Arad * N * dt) #TODO: Verify that this works!
     populations.append(N)
@@ -92,7 +94,7 @@ while times[-1] < T:
     if len(times)%1000 == 0:
         end = datetime.now()
         print "%g steps" % len(times)
-        print "dTe =", Te - temperatures[-2]
+        print "dTe =", temperatures[-1] - temperatures[-2]
         print "Elapsed time:", times[-1]
         print "Simulation Time:", (end - start), "\n"
 
