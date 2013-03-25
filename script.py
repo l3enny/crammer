@@ -17,7 +17,6 @@ from scipy.integrate import odeint
 # Included Modules
 from constants import *     # Useful elementary constants
 import handler              # Input/output handling
-import initcond             # Helpful functions for initial conditions
 import matrixgen            # Generates the rate matrices
 import solvers              # Handles general state calculations
 
@@ -40,8 +39,6 @@ order = sorted(states.keys(), key=lambda state:states[state]['E'])
 Ao = matrixgen.optical(gas)
 Ae = matrixgen.electronic(gas, Te)      # Generate electron rates
 km = matrixgen.km(gas, Te)              # Generate momentum transfer
-N = initcond.equilibrium(Ae*ne + Ao)
-ne = N[-1] * Ng
 def dNdt(t, N):
     # Atomic populations equation
     return np.dot(Ae*ne + Ao, N)
@@ -63,6 +60,16 @@ def dTedt(t, Te):
     #print "delta =", delta
     #raw_input('')
     return delta
+
+# Calculate the equilibrium condition
+err = 1.0
+TOL = 1.0e-6
+n = ne
+while err > TOL:
+    N = solvers.svd(Ae*n + Ao) * Ng
+    err = abs(n - N[-1]) / N[-1]
+    n = N[-1]
+    print "N =", N
 
 # Initialize solution arrays
 Arad = Ao.clip(min=0)   # Removes depopulation component
