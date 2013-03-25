@@ -51,7 +51,7 @@ def rk4(f, x, y, h):
     k4 = h * f(x +     h, y +     k3)
     return y + k1/6 + k2/3 + k3/3 + k4/6
 
-def rkf45(f, t0, y0, hmax, hmin, TOL, fixed=False):
+def rkf45(f, t0, y0, hmax, hmin, TOL):
     """
     Runge-Kutta-Fehlberg generator implemented per B. Bradie's "A
     Friendly Introduction to Numerical Analysis," incorporating
