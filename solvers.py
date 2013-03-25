@@ -86,7 +86,7 @@ def rkf45(f, t0, y0, hmax, hmin, TOL, fixed=False):
         k1, k2, k3, k4, k5, k6, errors = k(f, t, y, h)
         rerrors = errors/y
         eps = np.max(abs(rerrors))
-        #print "eps =", eps
+        print "eps =", eps
 
         if eps < TOL:
             y = y + (16./135)*k1 + (6656./12825)*k3 + (28561./56430)*k4 \
