@@ -16,11 +16,11 @@ M = 4.002602 * amu                   # Mass of the neutral particle
 ne = 1.670e14                        # background electron density, 1/m^3
 
 # Solver options (user-defined)
-T = 2.0e-8          # duration to simulate, s
-hmin = 1e-18        # minimum time step, s
+T = 1.0e-14         # duration to simulate, s
+hmin = 1e-20        # minimum time step, s
 hmax = 1e-09        # maximum time step, s
-TOL = 1.0e-00       # absolute allowable truncation error, 1/m^3
+dt = 1e-16
+TOL = 1.0e-06       # absolute allowable truncation error, 1/m^3
 
 # Output options (user-defined)
-dumprate = 0        # write data to disk after this many steps, 0 = never
 prefix = 'dump'     # file prefix for data files

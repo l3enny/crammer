@@ -21,7 +21,7 @@ import matrixgen            # Generates the rate matrices
 import solvers              # Handles general state calculations
 
 # User-specified options
-from settings.kushner import *       # load user settings file
+from settings.sandia import *       # load user settings file
 from gases import helium as gas      # choose gas to simulate
 
 
@@ -37,6 +37,7 @@ order = sorted(states.keys(), key=lambda state:states[state]['E'])
 # Set the initial conditions
 # TODO: Make this a user setting
 Ao = matrixgen.optical(gas)
+print "Ao:", Ao
 Ae = matrixgen.electronic(gas, Te)      # Generate electron rates
 km = matrixgen.km(gas, Te)              # Generate momentum transfer
 def dNdt(t, N):
@@ -54,43 +55,49 @@ def dTedt(t, Te):
     elastic = - ne * (2 * me / M) * km * Ng * 1.5 * kB * (Te - Tg)
     inelastic = - ne * Ng * np.sum(np.dot(Ae, N) * dE)
     delta = (source + elastic + inelastic) * (2./3) / (kB * ne)
-    #print "source =", source
-    #print "elastic=", elastic
-    #print "inelastic=", inelastic, '\n'
-    #print "delta =", delta
-    #raw_input('')
+    print "source =", source
+    print "elastic=", elastic
+    print "inelastic=", inelastic, '\n'
+    print "delta =", delta
+    raw_input('')
     return delta
 
 # Calculate the equilibrium condition
-ierr = 1.0
-iTOL = 1.0e-6
-n = ne
-while ierr > iTOL:
-    N = solvers.svd(Ae*n + Ao) * Ng
-    ierr = abs(n - N[-1]) / N[-1]
-    n = N[-1]
-    print "N =", N
+#ierr = 1.0
+#iTOL = 1.0e-6
+#n = 1.0
+#while ierr > iTOL:
+#    N = solvers.svd(Ae*n + Ao)
+#    print "N =", N
+#    print "np.sum(N) =", np.sum(N)
+#    raw_input('')
+#    ierr = abs(n - N[-1]) / N[-1]
+#    n = N[-1]
+#N = N * Ng
+#ne = N[-1]
 
 # Initialize solution arrays
 Arad = Ao.clip(min=0)   # Removes depopulation component
 errors = [0.0]
+N = np.array([Ng - ne, 0, 0, 0, 0, 0, 0, ne])
 populations = [N]
 times = [0.0]
 emissions = [np.zeros(Arad.shape)]
 temperatures = [Te]
 
 # Solution loop
-stepper = solvers.rkf45(dNdt, times[0], populations[0], hmax, hmin, TOL)
+#stepper = solvers.rkf45(dNdt, times[0], populations[0], hmax, hmin, TOL)
 start = datetime.now()
 while times[-1] < T:
     ne = N[-1]
-    N, dt, eps = stepper.next()  # Step to next value with generator function
-    #Te = solvers.rk4(dTedt, times[-1], Te, dt) # Advance with same time step
+    N = solvers.rk4(dNdt, times[-1], N, dt)
+    #N, dt, eps = stepper.next()  # Step to next value with generator function
+    Te = solvers.rk4(dTedt, times[-1], Te, dt) # Advance with same time step
     # Using python lists, append is much faster than NumPy equivalent
     emissions.append(Arad * N * dt) #TODO: Verify that this works!
     populations.append(N)
     times.append(times[-1] + dt)
-    errors.append(eps)
+    #errors.append(eps)
     temperatures.append(Te)
 
     # Regenerate temperature-dependent quantities
@@ -102,8 +109,9 @@ while times[-1] < T:
         end = datetime.now()
         print "%g steps" % len(times)
         print "Te =", Te
-        print "Elapsed time:", times[-1]
-        print "Simulation Time:", (end - start), "\n"
+        print "Simulation time:", times[-1], "(dt = %e s)" % (times[-1] -
+                times[-2])
+        print "Elapsed Time:", (end - start), "\n"
 
 # Generate all emission wavelengths in the proper order
 wavelengths = solvers.wavelengths(states, order)

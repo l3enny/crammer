@@ -11,17 +11,6 @@ import numpy as N
 
 import rate
 
-def electronic(gas, Te):
-    states = gas.states.states
-    order = sorted(states.keys(), key=lambda state:states[state]['E'])
-    dim = len(states)
-    mat = N.zeros((dim, dim))
-    for i in range(dim):
-        for f in range(i+1, dim):
-            mat[i, f], mat[f, i] = gas.electronic.rates(Te, order[i], order[f])
-        mat[i, i] = -np.sum(mat[i, :])
-    return mat
-
 def km(gas, Te):
     states = gas.states.states
     order = sorted(states.keys(), key=lambda state:states[state]['E'])
@@ -31,25 +20,16 @@ def km(gas, Te):
         km.append(gas.electronic.rates(Te, order[i], 'elastic')[0])
     return sum(km)
 
-#TODO: If this mode is reimplemented move the super-elastic code to
-#      either the cross section tables, or to a helper file
-#def electronic(gas, f, Te):
-#    states = gas.states.states
-#    order = sorted(states.keys(), key=lambda state:states[state]['E'])
-#    dim = len(states)
-#    mat = N.zeros((dim, dim))
-#    for i in range(dim):
-#        gi = states[order[i]]['g']
-#        Ei = states[order[i]]['E']
-#        for j in range(i + 1, dim):
-#            gf = states[order[j]]['g']
-#            Ef = states[order[j]]['E']
-#            transition = gas.electronic.Transition(order[i], order[j])
-#            down = rate.rate(transition, f)
-#            mat[j, i] = down
-#            mat[i, j] = down * (gf/gi) * N.exp((Ei - Ef)/Te)
-#        mat[i, i] = -sum(mat[:,i])
-#    return mat
+def electronic(gas, Te):
+    states = gas.states.states
+    order = sorted(states.keys(), key=lambda state:states[state]['E'])
+    dim = len(states)
+    mat = N.zeros((dim, dim))
+    for i in range(dim):
+        for f in range(i+1, dim):
+            mat[i, f], mat[f, i] = gas.electronic.rates(Te, order[i], order[f])
+        mat[i, i] = -N.sum(mat[i, :])
+    return mat
 
 def optical(gas):
     states = gas.states.states

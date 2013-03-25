@@ -15,7 +15,7 @@ forward = [ {100:{'elastic':1.601e-08,
                         201:1.381e-16,
                         300:3.610e-17,
                         301:1.143e-18,
-                      'ion':6.831e-12},
+                      'ion':6.831e-21},
              210:{'elastic':1.358e-07,
                         210:3.043e-09,
                         200:6.555e-11,
@@ -2587,12 +2587,12 @@ reverse = [ {100:{'elastic':0.000E+00,
                       'ion':0.000E+00}}]
 
 def rates(Te, istate, fstate):
-    #if all([Te > i for i in Tsim]):
-    #    print("WARNING: Temperature above calculation boundary,"
-    #          " extrapolating.")
-    #if all([Te < i for i in Tsim]):
-    #    print("WARNING: Temperature below calculation boundary,"
-    #          " extrapolating.")
+    if all([Te > i for i in Tsim]):
+        print("WARNING: Temperature above calculation boundary,"
+              " extrapolating.")
+    if all([Te < i for i in Tsim]):
+        print("WARNING: Temperature below calculation boundary,"
+              " extrapolating.")
     # Catch cases not covered by Kushner's simulation, and approximate
     # population of upper states so for emission tracking
     try:
