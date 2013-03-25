@@ -19,6 +19,7 @@ def electronic(gas, Te):
     for i in range(dim):
         for f in range(i+1, dim):
             mat[i, f], mat[f, i] = gas.electronic.rates(Te, order[i], order[f])
+        mat[i, i] = -np.sum(mat[i, :])
     return mat
 
 def km(gas, Te):
