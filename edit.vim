@@ -23,8 +23,8 @@ badd +12 handler.py
 badd +10 sandia.py
 badd +1 kushner.py
 badd +26 settings/kushner.py
-badd +0 gases/helium/rate.py
-badd +0 distributions.py
+badd +25 gases/helium/rate.py
+badd +17 distributions.py
 silent! argdel *
 edit gases/helium/rate.py
 set splitbelow splitright
@@ -70,7 +70,7 @@ normal! zt
 normal! 036l
 wincmd w
 argglobal
-edit distributions.py
+edit solvers.py
 setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -80,12 +80,12 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 17 - ((16 * winheight(0) + 17) / 34)
+let s:l = 1 - ((0 * winheight(0) + 17) / 34)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-17
-normal! 057l
+1
+normal! 0
 wincmd w
 argglobal
 edit script.py
@@ -98,11 +98,11 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 64 - ((27 * winheight(0) + 17) / 35)
+let s:l = 103 - ((34 * winheight(0) + 17) / 35)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-64
+103
 normal! 0
 wincmd w
 argglobal
@@ -121,10 +121,10 @@ if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
 2575
-normal! 04l
+normal! 03l
 lcd ~/Repos/crammer
 wincmd w
-3wincmd w
+2wincmd w
 exe '1resize ' . ((&lines * 35 + 36) / 72)
 exe 'vert 1resize ' . ((&columns * 104 + 103) / 207)
 exe '2resize ' . ((&lines * 34 + 36) / 72)

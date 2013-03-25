@@ -66,7 +66,7 @@ ierr = 1.0
 iTOL = 1.0e-6
 n = ne
 while ierr > iTOL:
-    N = solvers.svd(Ae*n + Ao)#* Ng
+    N = solvers.svd(Ae*n + Ao) * Ng
     ierr = abs(n - N[-1]) / N[-1]
     n = N[-1]
     print "N =", N
@@ -83,7 +83,7 @@ temperatures = [Te]
 stepper = solvers.rkf45(dNdt, times[0], populations[0], hmax, hmin, TOL)
 start = datetime.now()
 while times[-1] < T:
-    ne = N[-1] * Ng
+    ne = N[-1]
     N, dt, eps = stepper.next()  # Step to next value with generator function
     #Te = solvers.rk4(dTedt, times[-1], Te, dt) # Advance with same time step
     # Using python lists, append is much faster than NumPy equivalent
@@ -101,7 +101,7 @@ while times[-1] < T:
     if len(times)%1000 == 0:
         end = datetime.now()
         print "%g steps" % len(times)
-        print "dTe =", temperatures[-1] - temperatures[-2]
+        print "Te =", Te
         print "Elapsed time:", times[-1]
         print "Simulation Time:", (end - start), "\n"
 
