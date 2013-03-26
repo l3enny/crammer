@@ -11,11 +11,11 @@ set shortmess=aoO
 badd +80 script.py
 badd +29 transcribe.py
 badd +10 settings.py
-badd +2664 gases/helium/boltzmann.txt
-badd +1 solvers.py
+badd +117 gases/helium/boltzmann.txt
+badd +91 solvers.py
 badd +15 constants.py
-badd +41 matrixgen.py
-badd +2575 gases/helium/electronic.py
+badd +17 matrixgen.py
+badd +2589 gases/helium/electronic.py
 badd +548 gases/helium/ralchenko.py
 badd +9 gases/helium/states.py
 badd +16 initcond.py
@@ -25,10 +25,13 @@ badd +1 kushner.py
 badd +26 settings/kushner.py
 badd +22 gases/helium/rate.py
 badd +17 distributions.py
-badd +0 settings/sandia.py
-badd +0 gases/helium/km.py
+badd +26 settings/sandia.py
+badd +14 gases/helium/km.py
+badd +15 sc
+badd +26 scratch
+badd +2 gases/helium/__init__.py
 silent! argdel *
-edit gases/helium/boltzmann.txt
+edit matrixgen.py
 set splitbelow splitright
 wincmd _ | wincmd |
 vsplit
@@ -46,14 +49,14 @@ set nosplitbelow
 set nosplitright
 wincmd t
 set winheight=1 winwidth=1
-exe '1resize ' . ((&lines * 35 + 36) / 72)
-exe 'vert 1resize ' . ((&columns * 104 + 103) / 207)
-exe '2resize ' . ((&lines * 34 + 36) / 72)
-exe 'vert 2resize ' . ((&columns * 104 + 103) / 207)
-exe '3resize ' . ((&lines * 35 + 36) / 72)
-exe 'vert 3resize ' . ((&columns * 102 + 103) / 207)
-exe '4resize ' . ((&lines * 34 + 36) / 72)
-exe 'vert 4resize ' . ((&columns * 102 + 103) / 207)
+exe '1resize ' . ((&lines * 29 + 30) / 61)
+exe 'vert 1resize ' . ((&columns * 84 + 84) / 168)
+exe '2resize ' . ((&lines * 29 + 30) / 61)
+exe 'vert 2resize ' . ((&columns * 84 + 84) / 168)
+exe '3resize ' . ((&lines * 29 + 30) / 61)
+exe 'vert 3resize ' . ((&columns * 83 + 84) / 168)
+exe '4resize ' . ((&lines * 29 + 30) / 61)
+exe 'vert 4resize ' . ((&columns * 83 + 84) / 168)
 argglobal
 setlocal fdm=manual
 setlocal fde=0
@@ -64,15 +67,15 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 117 - ((17 * winheight(0) + 17) / 35)
+let s:l = 28 - ((15 * winheight(0) + 14) / 29)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-117
-normal! 010l
+28
+normal! 016l
 wincmd w
 argglobal
-edit gases/helium/km.py
+edit solvers.py
 setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -82,12 +85,12 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 5 - ((4 * winheight(0) + 17) / 34)
+let s:l = 18 - ((17 * winheight(0) + 14) / 29)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-5
-normal! 036l
+18
+normal! 04l
 wincmd w
 argglobal
 edit script.py
@@ -100,12 +103,12 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 54 - ((19 * winheight(0) + 17) / 35)
+let s:l = 74 - ((17 * winheight(0) + 14) / 29)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-54
-normal! 042l
+74
+normal! 0
 wincmd w
 argglobal
 edit settings/sandia.py
@@ -118,23 +121,23 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 17 - ((16 * winheight(0) + 17) / 34)
+let s:l = 27 - ((26 * winheight(0) + 14) / 29)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-17
-normal! 030l
+27
+normal! 015l
 lcd ~/Repos/crammer
 wincmd w
 4wincmd w
-exe '1resize ' . ((&lines * 35 + 36) / 72)
-exe 'vert 1resize ' . ((&columns * 104 + 103) / 207)
-exe '2resize ' . ((&lines * 34 + 36) / 72)
-exe 'vert 2resize ' . ((&columns * 104 + 103) / 207)
-exe '3resize ' . ((&lines * 35 + 36) / 72)
-exe 'vert 3resize ' . ((&columns * 102 + 103) / 207)
-exe '4resize ' . ((&lines * 34 + 36) / 72)
-exe 'vert 4resize ' . ((&columns * 102 + 103) / 207)
+exe '1resize ' . ((&lines * 29 + 30) / 61)
+exe 'vert 1resize ' . ((&columns * 84 + 84) / 168)
+exe '2resize ' . ((&lines * 29 + 30) / 61)
+exe 'vert 2resize ' . ((&columns * 84 + 84) / 168)
+exe '3resize ' . ((&lines * 29 + 30) / 61)
+exe 'vert 3resize ' . ((&columns * 83 + 84) / 168)
+exe '4resize ' . ((&lines * 29 + 30) / 61)
+exe 'vert 4resize ' . ((&columns * 83 + 84) / 168)
 tabnext 1
 if exists('s:wipebuf')
   silent exe 'bwipe ' . s:wipebuf

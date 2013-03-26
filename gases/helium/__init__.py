@@ -1,5 +1,5 @@
 from constants import q, amu
-import electronic, optical, atomic  # these modules do all the work, this file
+import electronic, optical, atomic, km # these modules do all the work, this file
                                     # is just a wrapper for their internal
                                     # functions.
 

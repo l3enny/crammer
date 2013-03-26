@@ -24,21 +24,17 @@ import solvers              # Handles general state calculations
 from settings.sandia import *       # load user settings file
 from gases import helium as gas      # choose gas to simulate
 
-
 # Convenient localization of state information, and ordering in 
 # ascending energy.
 # TODO: This is a bit inelegant; there should be a better way to do this
 states = gas.states.states
 order = sorted(states.keys(), key=lambda state:states[state]['E'])
 
-# Define rate equations and associated quantities
-
 # Initial transition matrix conditions
-# Set the initial conditions
 # TODO: Make this a user setting
 Ao = matrixgen.optical(gas)
 Ae = matrixgen.electronic(gas, Te)      # Generate electron rates
-km = matrixgen.km(gas, Te) * Ng * ne    # Generate momentum transfer
+km = matrixgen.km(gas, Te) * Ng/2.688e25    # Generate momentum transfer
 def dNdt(t, N):
     # Atomic populations equation
     return np.dot(Ae*ne + Ao, N)
@@ -50,10 +46,8 @@ def dTedt(t, Te):
         E = E0
     else:
         E = 0
-    print "km =", km
-    source = q**2 * ne * E**2 / (me * km * Ng)
-    elastic = - km * (2 * me / M) * 1.5 * kB * (Te - Tg)
-    print "N =", N
+    source = q**2 * E**2 / (me * km)
+    elastic = - ne * km * (2 * me / M) * 1.5 * kB * (Te - Tg)
     inelastic = - ne * np.sum(np.dot(Ae, N) * dE)
     delta = (source + elastic + inelastic) * (2./3) / (kB * ne)
     print "source =", source
@@ -64,23 +58,23 @@ def dTedt(t, Te):
     return delta
 
 # Calculate the equilibrium condition
-#ierr = 1.0
-#iTOL = 1.0e-6
-#n = 1.0
-#while ierr > iTOL:
-#    N = solvers.svd(Ae*n + Ao)
-#    print "N =", N
-#    print "np.sum(N) =", np.sum(N)
-#    raw_input('')
-#    ierr = abs(n - N[-1]) / N[-1]
-#    n = N[-1]
-#N = N * Ng
-#ne = N[-1]
+if equalize:
+    ierr = 1.0
+    iTOL = 1.0e-6
+    n = 1e11
+    while ierr > iTOL:
+        N = solvers.svd(Ae*n + Ao)
+        ierr = abs(n - N[-1]) / N[-1]
+        n = N[-1]
+    N = N * Ng
+    ne = N[-1]
+else:
+    N = np.array([Ng - ne, 0, 0, 0, 0, 0, 0, ne])
+
 
 # Initialize solution arrays
 Arad = Ao.clip(min=0)   # Removes depopulation component
 errors = [0.0]
-N = np.array([Ng - ne, 0, 0, 0, 0, 0, 0, ne])
 populations = [N]
 times = [0.0]
 emissions = [np.zeros(Arad.shape)]
@@ -92,9 +86,8 @@ start = datetime.now()
 while times[-1] < T:
     ne = N[-1]
     N = solvers.rk4(dNdt, times[-1], N, dt).clip(min=0)
-    print "N =", N
     #N, dt, eps = stepper.next()  # Step to next value with generator function
-    Te = solvers.rk4(dTedt, times[-1], Te, dt) # Advance with same time step
+    Te = Te#solvers.rk4(dTedt, times[-1], Te, dt) # Advance with same time step
     # Using python lists, append is much faster than NumPy equivalent
     emissions.append(Arad * N * dt) #TODO: Verify that this works!
     populations.append(N)
@@ -104,7 +97,8 @@ while times[-1] < T:
 
     # Regenerate temperature-dependent quantities
     Ae = matrixgen.electronic(gas, Te)
-    km = matrixgen.km(gas, Te) * Ng * ne
+    km = matrixgen.km(gas, Te) * Ng/2.688e25    # Generate momentum transfer
+
 
     # Output some useful information every 1000 steps
     if len(times)%1000 == 0:
