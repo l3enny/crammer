@@ -25,7 +25,7 @@ def dE(states, order):
         Ei = states[order[i]]['E']
         for f in range(dim):
             Ef = states[order[f]]['E']
-            mat[i, f] = (Ef - Ei)
+            mat[i, f] = (Ei - Ef)
     return mat
 
 def wavelengths(states, order):

@@ -2606,7 +2606,7 @@ def rates(Te, istate, fstate):
         rval = np.array([0.0] * len(Tsim))
     interpf = UnivariateSpline(np.array(Tsim), fval, s=0)
     interpr = UnivariateSpline(np.array(Tsim), rval, s=0)
-    return interpf(Te), interpr(Te)
+    return 1e-6 * interpf(Te), 1e-6 * interpr(Te)
 
 def test():
     import matplotlib.pyplot as plt

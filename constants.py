@@ -5,7 +5,7 @@ universe change.
 
 from math import pi, e
 
-# Defined/measure cosntants
+# Defined/measure constants
 c = 2.99792458e8        # m/s, exact
 q = 1.60217646e-19      # C
 amu = 1.660538921e-27   # kg
