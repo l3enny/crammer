@@ -21,7 +21,7 @@ import matrixgen            # Generates the rate matrices
 import solvers              # Handles general state calculations
 
 # User-specified options
-from settings.sandia import *       # load user settings file
+from settings.kushner import *       # load user settings file
 from gases import helium as gas      # choose gas to simulate
 
 # Convenient localization of state information, and ordering in 
@@ -34,10 +34,17 @@ order = sorted(states.keys(), key=lambda state:states[state]['E'])
 # TODO: Make this a user setting
 Ao = matrixgen.optical(gas)
 Ae = matrixgen.electronic(gas, Te)      # Generate electron rates
+print "Ae =", Ae
+import matplotlib.pyplot as plt
+plt.contourf(Ae)
+plt.colorbar()
+plt.show()
+raw_input('')
 km = matrixgen.km(gas, Te)/2.688e25     # Generate momentum transfer
 def dNdt(t, N):
     # Atomic populations equation
-    return np.dot(Ae*ne + Ao, N)
+    term = np.dot(Ae*ne + Ao, N)
+    return term
 
 dE = solvers.dE(states, order)
 def dTedt(t, Te):
@@ -48,13 +55,9 @@ def dTedt(t, Te):
         E = 0
     source = q**2 * ne * E**2 / (me * km * Ng)
     elastic = - ne * km * Ng * (2 * me / M) * 1.5 * kB * (Te - Tg)
-    print "N =", N
-    print "Ae =", Ae
-    print "dE =", dE
-    raw_input('')
     inelastic = - np.sum(np.dot(ne * Ae * dE, N))
     print "source =", dt * (2./3) * source / (kB * ne), "(K)"
-    print "elastic=", dt * (2./3) * elastic / (kB * ne), "(K)"
+    print "elastic=", dt * (3./3) * elastic / (kB * ne), "(K)"
     print "inelastic=", dt * (2./3) * inelastic / (kB * ne), "(K)"
     raw_input('')
     return (source + elastic + inelastic) * (2./3) / (kB * ne)
@@ -63,12 +66,14 @@ def dTedt(t, Te):
 if equalize:
     ierr = 1.0
     iTOL = 1.0e-6
-    n = 1e11
+    n = ne
     while ierr > iTOL:
-        N = solvers.svd(Ae*n + Ao)
+        N = solvers.svd(Ae*n + Ao) * Ng
+        print "N =", N
+        raw_input('')
         ierr = abs(n - N[-1]) / N[-1]
         n = N[-1]
-    N = N * Ng
+    N = N
     ne = N[-1]
 else:
     N = np.array([Ng - ne, 0, 0, 0, 0, 0, 0, ne])
@@ -87,8 +92,13 @@ start = datetime.now()
 while times[-1] < T:
     ne = N[-1]
     N = solvers.rk4(dNdt, times[-1], N, dt).clip(min=0)
+    print "N =", N
     #N, dt, eps = stepper.next()  # Step to next value with generator function
-    Te = solvers.rk4(dTedt, times[-1], Te, dt) # Advance with same time step
+    if energy:
+        Te = solvers.rk4(dTedt, times[-1], Te, dt) # Advance with same time step
+        print "New Te =", Te
+    else:
+        pass
     # Using python lists, append is much faster than NumPy equivalent
     emissions.append(Arad * N * dt) #TODO: Verify that this works!
     populations.append(N)

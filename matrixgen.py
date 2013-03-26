@@ -21,9 +21,23 @@ def electronic(gas, Te):
     mat = N.zeros((dim, dim))
     for i in range(dim):
         for f in range(i+1, dim):
-            mat[i, f], mat[f, i] = gas.electronic.rates(Te, order[i], order[f])
+            mat[f, i], mat[i, f] = gas.electronic.rates(Te, order[i], order[f])
         mat[i, i] = -N.sum(mat[:, i])
     return mat
+
+def electronic(gas, Te):
+    states = gas.states.states
+    order = sorted(states.keys(), key=lambda state:states[state]['E'])
+    dim = len(states)
+    mat = N.zeros((dim, dim))
+    # Move down the rows, equivalent to rate equation for each final state
+    for f in range(dim):
+        # Move across the columns: access each upper initial state
+        for i in range(f + 1, dim):
+            mat[f,i] = gas.electronic.rates(Te, order[i], order[f])
+        # Move across the columns: access each lower initial state
+        for i in range(0, f):
+            pass
 
 def optical(gas):
     states = gas.states.states
