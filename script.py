@@ -71,7 +71,6 @@ if equalize:
 else:
     N = np.array([Ng - ne, 0, 0, 0, 0, 0, 0, ne])
 
-
 # Initialize solution arrays
 Arad = Ao.clip(min=0)   # Removes depopulation component
 errors = [0.0]
