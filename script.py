@@ -34,7 +34,7 @@ order = sorted(states.keys(), key=lambda state:states[state]['E'])
 # TODO: Make this a user setting
 Ao = matrixgen.optical(gas)
 Ae = matrixgen.electronic(gas, Te)      # Generate electron rates
-km = matrixgen.km(gas, Te) * Ng/2.688e25    # Generate momentum transfer
+km = matrixgen.km(gas, Te)/2.688e25     # Generate momentum transfer
 def dNdt(t, N):
     # Atomic populations equation
     return np.dot(Ae*ne + Ao, N)
@@ -46,9 +46,9 @@ def dTedt(t, Te):
         E = E0
     else:
         E = 0
-    source = q**2 * E**2 / (me * km)
-    elastic = - ne * km * (2 * me / M) * 1.5 * kB * (Te - Tg)
-    inelastic = - ne * np.sum(np.dot(Ae * dE, N))
+    source = q**2 * ne * E**2 / (me * km * Ng)
+    elastic = - ne * km * Ng * (2 * me / M) * 1.5 * kB * (Te - Tg)
+    inelastic = - np.sum(np.dot(ne * Ae * dE, N))
     delta = (source + elastic + inelastic) * (2./3) / (kB * ne)
     print "source =", source
     print "elastic=", elastic
