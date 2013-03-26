@@ -48,7 +48,7 @@ def dTedt(t, Te):
         E = 0
     source = q**2 * E**2 / (me * km)
     elastic = - ne * km * (2 * me / M) * 1.5 * kB * (Te - Tg)
-    inelastic = - ne * np.sum(np.dot(Ae, N) * dE)
+    inelastic = - ne * np.sum(np.dot(Ae * dE, N))
     delta = (source + elastic + inelastic) * (2./3) / (kB * ne)
     print "source =", source
     print "elastic=", elastic
@@ -86,7 +86,7 @@ while times[-1] < T:
     ne = N[-1]
     N = solvers.rk4(dNdt, times[-1], N, dt).clip(min=0)
     #N, dt, eps = stepper.next()  # Step to next value with generator function
-    Te = Te#solvers.rk4(dTedt, times[-1], Te, dt) # Advance with same time step
+    Te = solvers.rk4(dTedt, times[-1], Te, dt) # Advance with same time step
     # Using python lists, append is much faster than NumPy equivalent
     emissions.append(Arad * N * dt) #TODO: Verify that this works!
     populations.append(N)
