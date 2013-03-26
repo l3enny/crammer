@@ -50,10 +50,10 @@ def dTedt(t, Te):
     source = q**2 * ne * E**2 / (me * km * Ng)
     elastic = - ne * km * Ng * (2 * me / M) * 1.5 * kB * (Te - Tg)
     inelastic = - np.sum(np.dot(ne * Ae * dE, N))
-    print "source =", dt * (2./3) * source / (kB * ne), "(K)"
-    print "elastic=", dt * (3./3) * elastic / (kB * ne), "(K)"
-    print "inelastic=", dt * (2./3) * inelastic / (kB * ne), "(K)"
-    raw_input('')
+    #print "source =", dt * (2./3) * source / (kB * ne), "(K)"
+    #print "elastic=", dt * (3./3) * elastic / (kB * ne), "(K)"
+    #print "inelastic=", dt * (2./3) * inelastic / (kB * ne), "(K)"
+    #raw_input('')
     return (source + elastic + inelastic) * (2./3) / (kB * ne)
 
 # Calculate the equilibrium condition
@@ -85,12 +85,11 @@ temperatures = [Te]
 start = datetime.now()
 while times[-1] < T:
     ne = N[-1]
-    N = solvers.rk4(dNdt, times[-1], N, dt).clip(min=0)
+    N = solvers.rk4(dNdt, times[-1], N, dt)
     #print "N =", N
     #N, dt, eps = stepper.next()  # Step to next value with generator function
     if energy:
         Te = solvers.rk4(dTedt, times[-1], Te, dt) # Advance with same time step
-        print "New Te =", Te
     else:
         pass
     # Using python lists, append is much faster than NumPy equivalent
@@ -109,8 +108,7 @@ while times[-1] < T:
         end = datetime.now()
         print "%g steps" % len(times)
         print "Te =", Te
-        print "Simulation time:", times[-1], "(dt = %e s)" % (times[-1] -
-                times[-2])
+        print "Simulation time: %g (%g)" % (times[-1], T)
         print "Elapsed Time:", (end - start), "\n"
 
 # Generate all emission wavelengths in the proper order
