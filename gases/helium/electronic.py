@@ -2598,7 +2598,6 @@ def rates(Te, istate, fstate):
     try:
         fval = np.array([i[istate][fstate] for i in forward])
     except KeyError:
-        print "Keys not found for (%g, %g)" % (istate, fstate)
         fval = np.array([0.0] * len(Tsim))
     interp = UnivariateSpline(np.array(Tsim), fval, s=0)
     return 1e-6 * interp(Te)

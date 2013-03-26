@@ -33,7 +33,7 @@ def electronic(gas, Te):
     # Move down the rows, equivalent to rate equation for each final state
     for f in range(dim):
         # Move across the columns: access each upper initial state
-        for i in range(f + 1, dim):
+        for i in range(dim):
             mat[f,i] = gas.electronic.rates(Te, order[i], order[f])
     for i in range(dim):
         mat[i, i] = -N.sum(mat[:, i])

@@ -34,12 +34,6 @@ order = sorted(states.keys(), key=lambda state:states[state]['E'])
 # TODO: Make this a user setting
 Ao = matrixgen.optical(gas)
 Ae = matrixgen.electronic(gas, Te)      # Generate electron rates
-print "Ae =", Ae
-import matplotlib.pyplot as plt
-plt.contourf(Ae)
-plt.colorbar()
-plt.show()
-raw_input('')
 km = matrixgen.km(gas, Te)/2.688e25     # Generate momentum transfer
 def dNdt(t, N):
     # Atomic populations equation
@@ -92,7 +86,7 @@ start = datetime.now()
 while times[-1] < T:
     ne = N[-1]
     N = solvers.rk4(dNdt, times[-1], N, dt).clip(min=0)
-    print "N =", N
+    #print "N =", N
     #N, dt, eps = stepper.next()  # Step to next value with generator function
     if energy:
         Te = solvers.rk4(dTedt, times[-1], Te, dt) # Advance with same time step
@@ -109,7 +103,6 @@ while times[-1] < T:
     # Regenerate temperature-dependent quantities
     Ae = matrixgen.electronic(gas, Te)
     km = matrixgen.km(gas, Te)/2.688e25    # Generate momentum transfer
-
 
     # Output some useful information every 1000 steps
     if len(times)%1000 == 0:
