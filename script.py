@@ -111,7 +111,7 @@ while times[-1] < T:
 wavelengths = solvers.wavelengths(states, order)
 # Move populations to an array for proper output (is this necessary?)
 # populations = np.array(populations)
-names = ['times', 'populations', 'errors', 'wavelengths', 
-         'temperatures', 'emissions']
-data =  [times, populations, errors, wavelengths, temperatures, emissions]
+print emissions[1]
+names = ['times', 'populations', 'wavelengths', 'temperatures', 'emissions']
+data =  [times, populations, wavelengths, temperatures, emissions]
 handler.save(data, names, prefix)

@@ -14,8 +14,8 @@ M = 4.002602 * amu                   # Mass of the neutral particle
 ne = 6.436e7 * 1e6                   # background electron density, 1/m^3
 
 # Solver options (user-defined)
-T = 1.0e-06         # duration to simulate, s
-#dt = 1e-10          # solution time step
+T = 2.0e-08         # duration to simulate, s
+dt = 1e-11          # solution time step
 TOL = 1.0e-06       # absolute allowable truncation error, 1/m^3
 hmax = 1e-9
 hmin = 1e-20

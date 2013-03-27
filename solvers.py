@@ -29,15 +29,14 @@ def dE(states, order):
     return mat
 
 def wavelengths(states, order):
-    w = np.array([])
-    for i in order:
-        Ei = states[i]['E']
-        for f in [j for j in order if j != i]:
-            Ef = states[f]['E']
-            if Ef < Ei:
-                continue
-            w = np.append(w, (h * c) / (Ef - Ei))
-    return w
+    w = []
+    dim = len(order)
+    for f in range(dim):
+        Ef = states[order[f]]['E']
+        for i in range(f):
+            Ei = states[order[i]]['E']
+            w.append((h * c) / (Ef - Ei))
+    return np.array(w)
 
 # ODE Solvers
 # These are a selection of different solvers. 
