@@ -21,7 +21,7 @@ import matrixgen            # Generates the rate matrices
 import solvers              # Handles general state calculations
 
 # User-specified options
-from settings.kushner import *       # load user settings file
+from settings.sandia import *       # load user settings file
 from gases import helium as gas      # choose gas to simulate
 
 # Convenient localization of state information, and ordering in 
@@ -113,6 +113,8 @@ while times[-1] < T:
 
 # Generate all emission wavelengths in the proper order
 wavelengths = solvers.wavelengths(states, order)
-names = ['times', 'populations', 'wavelengths', 'temperatures', 'emissions']
-data =  [times, populations, wavelengths, temperatures, emissions]
+order = np.array(order)
+names = ['times', 'populations', 'wavelengths', 'temperatures', 'emissions',
+'order']
+data =  [times, populations, wavelengths, temperatures, emissions, order]
 handler.save(data, names, prefix)
