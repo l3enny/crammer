@@ -50,6 +50,16 @@ def optical(gas):
         mat[i, i] = -sum(mat[:, i])
     return mat
 
+def linopt(gas):
+    states = gas.states.states
+    order = sorted(states.keys(), key=lambda state:states[state]['E'])
+    dim = len(states)
+    lin = []
+    for f in range(dim):
+        for i in range(f):
+            lin.append(gas.optical.A(order[f], order[i]))
+    return N.array(lin)
+
 def atomic(gas):
     states = gas.states.states
     order = sorted(states.keys(), key=lambda state:states[state]['E'])
