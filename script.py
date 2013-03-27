@@ -50,10 +50,6 @@ def dTedt(t, Te):
     source = q**2 * ne * E**2 / (me * km * Ng)
     elastic = - ne * km * Ng * (2 * me / M) * 1.5 * kB * (Te - Tg)
     inelastic = - np.sum(np.dot(ne * Ae * dE, N))
-    #print "source =", dt * (2./3) * source / (kB * ne), "(K)"
-    #print "elastic=", dt * (3./3) * elastic / (kB * ne), "(K)"
-    #print "inelastic=", dt * (2./3) * inelastic / (kB * ne), "(K)"
-    #raw_input('')
     return (source + elastic + inelastic) * (2./3) / (kB * ne)
 
 # Calculate the equilibrium condition
