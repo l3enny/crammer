@@ -9,10 +9,10 @@ Requirements: Numpy 1.6+, Scipy 0.10+
 
 # Standard Modules
 from datetime import datetime
+import csv
 
 # Third Party Modules
 import numpy as np
-from scipy.integrate import odeint
 
 # Included Modules
 from constants import *     # Useful elementary constants
@@ -30,7 +30,7 @@ from gases import helium as gas      # choose gas to simulate
 states = gas.states.states
 order = sorted(states.keys(), key=lambda state:states[state]['E'])
 
-solvers.wavelengths(states, order)
+print "The applied electric field is: %g V/m" % E0
 
 # Initial transition matrix conditions
 # TODO: Make this a user setting
@@ -114,7 +114,9 @@ while times[-1] < T:
 # Generate all emission wavelengths in the proper order
 wavelengths = solvers.wavelengths(states, order)
 order = np.array(order)
-names = ['times', 'populations', 'wavelengths', 'temperatures', 'emissions',
-'order']
-data =  [times, populations, wavelengths, temperatures, emissions, order]
+names = ['times', 'populations', 'wavelengths', 'temperatures', 'emissions']
+data =  [times, populations, wavelengths, temperatures, emissions]
+with open('dump_order.csv', 'wb') as csvfile:
+    writer = csv.writer(csvfile, delimiter=',')
+    writer.writerow(order)
 handler.save(data, names, prefix)
