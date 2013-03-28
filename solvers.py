@@ -48,8 +48,7 @@ def rk4(f, x, y, h):
     k2 = h * f(x + 0.5*h, y + 0.5*k1)
     k3 = h * f(x + 0.5*h, y + 0.5*k2)
     k4 = h * f(x +     h, y +     k3)
-    term = y + k1/6 + k2/3 + k3/3 + k4/6
-    return term
+    return y + k1/6 + k2/3 + k3/3 + k4/6
 
 def rkf45(f, t0, y0, hmax, hmin, TOL):
     """
