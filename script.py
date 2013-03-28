@@ -57,15 +57,10 @@ def dTedt(t, Te):
 if equalize:
     ierr = 1.0
     iTOL = 1.0e-6
-    n = ne
     while ierr > iTOL:
-        N = solvers.svd(Ae*n + Ao) * Ng
-        print "N =", N
-        raw_input('')
-        ierr = abs(n - N[-1]) / N[-1]
-        n = N[-1]
-    N = N
-    ne = N[-1]
+        N = solvers.svd(Ae*ne + Ao) * Ng
+        ierr = abs(ne - N[-1]) / N[-1]
+        ne = N[-1]
 else:
     N = np.array([Ng - ne, 0, 0, 0, 0, 0, 0, ne])
 
@@ -84,7 +79,7 @@ while times[-1] < T:
         Te = solvers.rk4(dTedt, times[-1], Te, dt) # Advance with same time step
     else:
         pass
-    ne = N[-1]
+    ne = N[-1]          # enforce quasi-neutrality
     # There must be a more elegant way of accomplishing this ...
     Nalign = []
     for i in range(1, len(N)):

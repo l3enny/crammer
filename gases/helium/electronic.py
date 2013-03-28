@@ -2587,10 +2587,10 @@ reverse = [ {100:{'elastic':0.000E+00,
                       'ion':0.000E+00}}]
 
 def rates(Te, istate, fstate):
-    if all([Te > i for i in Tsim]):
+    if all([np.max(Te) > i for i in Tsim]):
         print("WARNING: Temperature above calculation boundary,"
               " extrapolating.")
-    if all([Te < i for i in Tsim]):
+    if all([np.min(Te) < i for i in Tsim]):
         print("WARNING: Temperature below calculation boundary,"
               " extrapolating.")
     # Catch cases not covered by Kushner's simulation, and approximate
@@ -2600,7 +2600,7 @@ def rates(Te, istate, fstate):
     except KeyError:
         fval = np.array([0.0] * len(Tsim))
     interp = UnivariateSpline(np.array(Tsim), fval, s=0)
-    return 1e-6 * interp(Te)
+    return 1e-6 * interp(Te).clip(min=0)
 
 def test():
     import matplotlib.pyplot as plt
