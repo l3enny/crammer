@@ -32,20 +32,18 @@ order = sorted(states.keys(), key=lambda state:states[state]['E'])
 
 print "The applied electric field is: %g V/m" % E0
 
-# Initial transition matrix conditions
-# TODO: Make this a user setting
+# Generate initial transition matrices and constants
 Ao = matrixgen.optical(gas)
 Alin = matrixgen.linopt(gas)
-Ae = matrixgen.electronic(gas, Te)      # Generate electron rates
-km = matrixgen.km(gas, Te)/2.688e25     # Generate momentum transfer
+Ae = matrixgen.electronic(gas, Te)
+km = matrixgen.km(gas, Te)
+dE = solvers.dE(states, order)
+
 def dNdt(t, N):
-    # Atomic populations equation
     term = np.dot(Ae*ne + Ao, N)
     return term
 
-dE = solvers.dE(states, order)
 def dTedt(t, Te):
-    # Electron energy equation
     if t < tau:
         E = E0
     else:
@@ -79,29 +77,27 @@ emissions = [np.zeros(Alin.shape)]
 temperatures = [Te]
 
 # Solution loop
-#stepper = solvers.rkf45(dNdt, times[0], populations[0], hmax, hmin, TOL)
 start = datetime.now()
 while times[-1] < T:
-    ne = N[-1]
     N = solvers.rk4(dNdt, times[-1], N, dt).clip(min=0)
-    #print "N =", N
-    #N, dt, eps = stepper.next()  # Step to next value with generator function
     if energy:
         Te = solvers.rk4(dTedt, times[-1], Te, dt) # Advance with same time step
     else:
         pass
-    # Using python lists, append is much faster than NumPy equivalent
+    ne = N[-1]
+    # There must be a more elegant way of accomplishing this ...
     Nalign = []
     for i in range(1, len(N)):
         Nalign.extend([N[i]] * i)
-    emissions.append(Alin * Nalign * dt) #TODO: Verify that this works!
+    # Python lists are much faster than appending to ndarrays
+    emissions.append(Alin * Nalign * dt)
     populations.append(N)
     times.append(times[-1] + dt)
     temperatures.append(Te)
 
     # Regenerate temperature-dependent quantities
     Ae = matrixgen.electronic(gas, Te)
-    km = matrixgen.km(gas, Te)/2.688e25    # Generate momentum transfer
+    km = matrixgen.km(gas, Te)
 
     # Output some useful information every 1000 steps
     if len(times)%1000 == 0:
@@ -116,6 +112,7 @@ wavelengths = solvers.wavelengths(states, order)
 order = np.array(order)
 names = ['times', 'populations', 'wavelengths', 'temperatures', 'emissions']
 data =  [times, populations, wavelengths, temperatures, emissions]
+# Replace the order dump with something a tad more elegant
 with open('dump_order.csv', 'wb') as csvfile:
     writer = csv.writer(csvfile, delimiter=',')
     writer.writerow(order)

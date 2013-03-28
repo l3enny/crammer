@@ -19,26 +19,25 @@ def emissions(times, intensities, wavelengths, step=1):
     plt.legend(labels)
     plt.savefig("emissions.pdf")
     plt.hold(False)
+    plt.clf()
 
 def states(times, states, labels, step=1):
     N = loadtxt(states, delimiter=',')
     t = loadtxt(times, delimiter=',')
+    select = range(N.shape[1])
     with open(labels) as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
         for row in reader:
             l = row
     plt.hold(True)
-    for i in range(N.shape[1]):
-        print "Iteration", i
-        print N[::step, i]
-        print "Label:", l[i]
-        raw_input('')
-        plt.plot(1e6 * t[::step], N[::step, i], linewidth=2)
+    for i in select:
+        plt.semilogy(1e6 * t[::step], N[::step, i], linewidth=2)
     plt.xlabel('Time ($\mu$s)')
     plt.ylabel('Density (1/m$^3$)')
     plt.legend(l)
     plt.savefig("populations.pdf")
     plt.hold(False)
+    plt.clf()
 
 def temperatures(times, temperatures, step=1):
     t = loadtxt(times, delimiter=',')
@@ -47,6 +46,7 @@ def temperatures(times, temperatures, step=1):
     plt.xlabel('Time ($\mu$s)')
     plt.ylabel('Electron Temperature (eV)')
     plt.savefig("temperatures.pdf")
+    plt.clf()
 
 if __name__ == "__main__":
     pre = 'dump'

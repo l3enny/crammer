@@ -13,7 +13,7 @@ E0 = EN * Ng                         # The applied electric field
 M = 4.002602 * amu                   # Mass of the neutral particle
 
 # WARNING: This value is worthless for the current equilibrium solver
-ne = 1e10 * 1e6                       # background electron density, 1/m^3
+ne = 1e00 * 1e6                       # background electron density, 1/m^3
 
 # Solver options (user-defined)
 T = 1.4e-7          # duration to simulate, s
