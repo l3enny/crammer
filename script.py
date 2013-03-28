@@ -38,6 +38,7 @@ Alin = matrixgen.linopt(gas)
 Ae = matrixgen.electronic(gas, Te)
 km = matrixgen.km(gas, Te)
 dE = solvers.dE(states, order)
+E = np.array([states[i]['E'] for i in order])
 
 def dNdt(t, N):
     term = np.dot(Ae*ne + Ao, N)
@@ -70,6 +71,7 @@ populations = [N]
 times = [0.0]
 emissions = [np.zeros(Alin.shape)]
 temperatures = [Te]
+energies= [np.sum(N * E + 1.5 * kB * Te * ne)]
 
 # Solution loop
 start = datetime.now()
@@ -89,6 +91,7 @@ while times[-1] < T:
     populations.append(N)
     times.append(times[-1] + dt)
     temperatures.append(Te)
+    energies.append(np.sum(N*E) + 1.5 * kB * Te * ne)
 
     # Regenerate temperature-dependent quantities
     Ae = matrixgen.electronic(gas, Te)
@@ -105,8 +108,9 @@ while times[-1] < T:
 # Generate all emission wavelengths in the proper order
 wavelengths = solvers.wavelengths(states, order)
 order = np.array(order)
-names = ['times', 'populations', 'wavelengths', 'temperatures', 'emissions']
-data =  [times, populations, wavelengths, temperatures, emissions]
+names = ['times', 'populations', 'wavelengths', 'temperatures', 'emissions',
+'energies']
+data =  [times, populations, wavelengths, temperatures, emissions, energies]
 # Replace the order dump with something a tad more elegant
 with open('dump_order.csv', 'wb') as csvfile:
     writer = csv.writer(csvfile, delimiter=',')

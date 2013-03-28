@@ -3,7 +3,7 @@ from constants import *
 # Unnecessary, but convenient values
 Tg = 300                             # neutral gas temperature, K
 P = 3.0 * 133.322                    # neutral gas pressure, Pa
-EN = 1.0e-15 * 1e-4                  # reduced electric field, V m^2
+EN = 2.0e-15 * 1e-4                  # reduced electric field, V m^2
 
 # Physical system options (user-defined)
 # Electron temperature chosen for minimum of available data
@@ -13,7 +13,7 @@ E0 = EN * Ng                         # The applied electric field
 M = 4.002602 * amu                   # Mass of the neutral particle
 
 # WARNING: This value is worthless for the current equilibrium solver
-ne = 1e00 * 1e6                       # background electron density, 1/m^3
+ne = 1e05 * 1e6                       # background electron density, 1/m^3
 
 # Solver options (user-defined)
 T = 1.4e-7          # duration to simulate, s

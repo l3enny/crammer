@@ -14,17 +14,6 @@ import rate
 def km(gas, Te):
     return gas.km.K(Te)
 
-#def electronic(gas, Te):
-#    states = gas.states.states
-#    order = sorted(states.keys(), key=lambda state:states[state]['E'])
-#    dim = len(states)
-#    mat = N.zeros((dim, dim))
-#    for i in range(dim):
-#        for f in range(i+1, dim):
-#            mat[f, i], mat[i, f] = gas.electronic.rates(Te, order[i], order[f])
-#        mat[i, i] = -N.sum(mat[:, i])
-#    return mat
-
 def electronic(gas, Te):
     states = gas.states.states
     order = sorted(states.keys(), key=lambda state:states[state]['E'])
