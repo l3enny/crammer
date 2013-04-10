@@ -35,7 +35,7 @@ def states(times, states, labels, step=1):
     plt.xlabel('Time ($\mu$s)')
     plt.ylabel('Density (1/m$^3$)')
     plt.legend(l)
-    plt.savefig("populations.png")
+    plt.savefig("populations.pdf")
     plt.hold(False)
     plt.clf()
 
