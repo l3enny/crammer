@@ -105,6 +105,7 @@ while times[-1] < T:
         print "Simulation time: %g (%g)" % (times[-1], T)
         print "Elapsed Time:", (end - start), "\n"
 
+print "Nm (t = %g): %e \n" % (times[-1], N[1])
 # Generate all emission wavelengths in the proper order
 wavelengths = solvers.wavelengths(states, order)
 order = np.array(order)
