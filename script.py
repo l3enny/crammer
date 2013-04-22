@@ -55,6 +55,7 @@ def dTedt(t, Te):
     return (source + elastic + inelastic) * (2./3) / (kB * ne)
 
 # Calculate the equilibrium condition
+#TODO: BROKEN!
 if equalize:
     ierr = 1.0
     iTOL = 1.0e-6
@@ -76,26 +77,28 @@ energies= [np.sum(N * E + 1.5 * kB * Te * ne)]
 # Solution loop
 start = datetime.now()
 while times[-1] < T:
+
+    # Integrate population (and energy) equations.
     N = solvers.rk4(dNdt, times[-1], N, dt).clip(min=0)
     if energy:
-        Te = solvers.rk4(dTedt, times[-1], Te, dt) # Advance with same time step
-    else:
-        pass
+        Te = solvers.rk4(dTedt, times[-1], Te, dt)
+        # Regenerate temperature-dependent quantities
+        Ae = matrixgen.electronic(gas, Te)
+        km = matrixgen.km(gas, Te)
+
     ne = N[-1]          # enforce quasi-neutrality
+
     # There must be a more elegant way of accomplishing this ...
     Nalign = []
     for i in range(1, len(N)):
         Nalign.extend([N[i]] * i)
+
     # Python lists are much faster than appending to ndarrays
     emissions.append(Alin * Nalign * dt)
     populations.append(N)
     times.append(times[-1] + dt)
     temperatures.append(Te)
     energies.append(np.sum(N*E) + 1.5 * kB * Te * ne)
-
-    # Regenerate temperature-dependent quantities
-    Ae = matrixgen.electronic(gas, Te)
-    km = matrixgen.km(gas, Te)
 
     # Output some useful information every 1000 steps
     if len(times)%1000 == 0:
