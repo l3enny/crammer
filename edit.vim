@@ -25,14 +25,14 @@ badd +1 kushner.py
 badd +17 settings/kushner.py
 badd +22 gases/helium/rate.py
 badd +17 distributions.py
-badd +22 settings/sandia.py
+badd +16 settings/sandia.py
 badd +14 gases/helium/km.py
 badd +15 sc
 badd +26 scratch
 badd +2 gases/helium/__init__.py
-badd +32 visualize.py
+badd +1 visualize.py
 badd +1 or
-badd +0 dump_order.csv
+badd +1 dump_order.csv
 silent! argdel *
 edit visualize.py
 set splitbelow splitright
@@ -44,27 +44,15 @@ split
 1wincmd k
 wincmd w
 wincmd w
-wincmd _ | wincmd |
-split
-wincmd _ | wincmd |
-split
-2wincmd k
-wincmd w
-wincmd w
 set nosplitbelow
 set nosplitright
 wincmd t
 set winheight=1 winwidth=1
-exe '1resize ' . ((&lines * 29 + 30) / 61)
-exe 'vert 1resize ' . ((&columns * 88 + 89) / 178)
-exe '2resize ' . ((&lines * 29 + 30) / 61)
-exe 'vert 2resize ' . ((&columns * 88 + 89) / 178)
-exe '3resize ' . ((&lines * 19 + 30) / 61)
-exe 'vert 3resize ' . ((&columns * 89 + 89) / 178)
-exe '4resize ' . ((&lines * 19 + 30) / 61)
-exe 'vert 4resize ' . ((&columns * 89 + 89) / 178)
-exe '5resize ' . ((&lines * 19 + 30) / 61)
-exe 'vert 5resize ' . ((&columns * 89 + 89) / 178)
+exe '1resize ' . ((&lines * 35 + 36) / 72)
+exe 'vert 1resize ' . ((&columns * 102 + 103) / 207)
+exe '2resize ' . ((&lines * 34 + 36) / 72)
+exe 'vert 2resize ' . ((&columns * 102 + 103) / 207)
+exe 'vert 3resize ' . ((&columns * 104 + 103) / 207)
 argglobal
 setlocal fdm=manual
 setlocal fde=0
@@ -75,12 +63,12 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 34 - ((13 * winheight(0) + 14) / 29)
+let s:l = 1 - ((0 * winheight(0) + 17) / 35)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-34
-normal! 024l
+1
+normal! 09l
 wincmd w
 argglobal
 edit gases/helium/electronic.py
@@ -93,30 +81,12 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 211 - ((11 * winheight(0) + 14) / 29)
+let s:l = 211 - ((0 * winheight(0) + 17) / 34)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
 211
 normal! 037l
-wincmd w
-argglobal
-edit dump_order.csv
-setlocal fdm=manual
-setlocal fde=0
-setlocal fmr={{{,}}}
-setlocal fdi=#
-setlocal fdl=0
-setlocal fml=0
-setlocal fdn=20
-setlocal nofen
-silent! normal! zE
-let s:l = 1 - ((0 * winheight(0) + 9) / 19)
-if s:l < 1 | let s:l = 1 | endif
-exe s:l
-normal! zt
-1
-normal! 030l
 wincmd w
 argglobal
 edit script.py
@@ -129,42 +99,20 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 122 - ((17 * winheight(0) + 9) / 19)
+let s:l = 122 - ((69 * winheight(0) + 35) / 70)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
 122
 normal! 04l
-wincmd w
-argglobal
-edit settings/sandia.py
-setlocal fdm=manual
-setlocal fde=0
-setlocal fmr={{{,}}}
-setlocal fdi=#
-setlocal fdl=0
-setlocal fml=1
-setlocal fdn=20
-setlocal fen
-silent! normal! zE
-let s:l = 16 - ((5 * winheight(0) + 9) / 19)
-if s:l < 1 | let s:l = 1 | endif
-exe s:l
-normal! zt
-16
-normal! 08l
 lcd ~/Repos/crammer
 wincmd w
-exe '1resize ' . ((&lines * 29 + 30) / 61)
-exe 'vert 1resize ' . ((&columns * 88 + 89) / 178)
-exe '2resize ' . ((&lines * 29 + 30) / 61)
-exe 'vert 2resize ' . ((&columns * 88 + 89) / 178)
-exe '3resize ' . ((&lines * 19 + 30) / 61)
-exe 'vert 3resize ' . ((&columns * 89 + 89) / 178)
-exe '4resize ' . ((&lines * 19 + 30) / 61)
-exe 'vert 4resize ' . ((&columns * 89 + 89) / 178)
-exe '5resize ' . ((&lines * 19 + 30) / 61)
-exe 'vert 5resize ' . ((&columns * 89 + 89) / 178)
+3wincmd w
+exe '1resize ' . ((&lines * 35 + 36) / 72)
+exe 'vert 1resize ' . ((&columns * 102 + 103) / 207)
+exe '2resize ' . ((&lines * 34 + 36) / 72)
+exe 'vert 2resize ' . ((&columns * 102 + 103) / 207)
+exe 'vert 3resize ' . ((&columns * 104 + 103) / 207)
 tabnext 1
 if exists('s:wipebuf')
   silent exe 'bwipe ' . s:wipebuf
