@@ -18,11 +18,11 @@ import numpy as np
 from constants import *     # Useful elementary constants
 import handler              # Input/output handling
 import matrixgen            # Generates the rate matrices
+import rates
 import solvers              # Handles general state calculations
 
 # User-specified options
 from settings.sandia import *       # load user settings file
-from gases import helium as gas      # choose gas to simulate
 
 # Convenient localization of state information, and ordering in 
 # ascending energy.
@@ -35,7 +35,7 @@ print "The applied electric field is: %g V/m" % E0
 # Generate initial transition matrices and constants
 Ao = matrixgen.optical(gas)
 Alin = matrixgen.linopt(gas)
-Ae = matrixgen.electronic(gas, Te)
+Ae = matrixgen.electronic2(gas, coeffs, Te)
 km = matrixgen.km(gas, Te)
 dE = solvers.dE(states, order)
 E = np.array([states[i]['E'] for i in order])
@@ -83,7 +83,7 @@ while times[-1] < T:
     if energy:
         Te = solvers.rk4(dTedt, times[-1], Te, dt)
         # Regenerate temperature-dependent quantities
-        Ae = matrixgen.electronic(gas, Te)
+        Ae = matrixgen.electronic2(gas, coeffs, Te)
         km = matrixgen.km(gas, Te)
 
     ne = N[-1]          # enforce quasi-neutrality

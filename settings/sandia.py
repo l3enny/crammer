@@ -1,5 +1,13 @@
 from constants import *
 
+from gases import helium as gas      # choose gas to simulate
+
+import cPickle
+
+with open('./gases/helium/ralchenko.pickle', mode='r') as f:
+    u = cPickle.Unpickler(f)
+    coeffs = u.load()
+
 # Unnecessary, but convenient values
 Tg = 300                             # neutral gas temperature, K
 P = 4.0 * 133.322                    # neutral gas pressure, Pa
