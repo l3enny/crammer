@@ -12,10 +12,9 @@ def emissions(times, intensities, wavelengths, step=1):
     nonzero = [0, 3, 4, 5, 6, 7, 8, 13, 15, 16, 20]
     plt.hold(True)
     for i in select:
-        plt.plot(1e6 * t[::step], I[::step,i], linewidth=2)
+        plt.plot(1e9 * t[::step], I[::step,i], linewidth=2)
     labels = [int(round(i * 1e9, 0)) for i in L[select]]
-    plt.axis([-0.045, 0.085, 0, 4e7])
-    plt.xlabel('Time ($\mu$s)')
+    plt.xlabel('Time (ns)')
     plt.ylabel('Intensity (a.u.)')
     plt.legend(labels)
     plt.savefig("emissions.pdf")
@@ -32,11 +31,9 @@ def states(times, states, labels, step=1):
             l = row
     plt.hold(True)
     for i in select:
-        plt.semilogy(1e6 * t[::step], N[::step, i], linewidth=2)
-    plt.axis([0.0, 0.14, 1e6, 1e24])
-    plt.xlabel('Time ($\mu$s)')
+        plt.semilogy(1e9 * t[::step], N[::step, i], linewidth=3)
+    plt.xlabel('Time (ns)')
     plt.ylabel('Density (1/m$^3$)')
-    plt.title('300 V/cm, 10 ns, 4.0 Torr')
     plt.legend(l)
     plt.savefig("populations.pdf")
     plt.hold(False)
@@ -45,9 +42,8 @@ def states(times, states, labels, step=1):
 def temperatures(times, temperatures, step=1):
     t = loadtxt(times, delimiter=',')
     Te = loadtxt(temperatures, delimiter=',')
-    plt.plot(1e6 * t[::step], kB * Te[::step] / q, linewidth=2)
-    plt.axis([-0.045, 0.085, 0, 20])
-    plt.xlabel('Time ($\mu$s)')
+    plt.semilogy(1e9 * t[::step], kB * Te[::step] / q, linewidth=2)
+    plt.xlabel('Time (ns)')
     plt.ylabel('Electron Temperature (eV)')
     plt.savefig("temperatures.pdf")
     plt.clf()

@@ -18,11 +18,11 @@ import numpy as np
 from constants import *     # Useful elementary constants
 import handler              # Input/output handling
 import matrixgen            # Generates the rate matrices
+import rates
 import solvers              # Handles general state calculations
 
 # User-specified options
-from settings.sandia4torr import *   # load user settings file
-from gases import helium as gas      # choose gas to simulate
+from settings.sandia import *       # load user settings file
 
 # Convenient localization of state information, and ordering in 
 # ascending energy.
@@ -30,10 +30,12 @@ from gases import helium as gas      # choose gas to simulate
 states = gas.states.states
 order = sorted(states.keys(), key=lambda state:states[state]['E'])
 
+print "The applied electric field is: %g V/m" % E0
+
 # Generate initial transition matrices and constants
 Ao = matrixgen.optical(gas)
 Alin = matrixgen.linopt(gas)
-Ae = matrixgen.electronic(gas, Te)
+Ae = matrixgen.electronic2(gas, coeffs, Te)
 km = matrixgen.km(gas, Te)
 dE = solvers.dE(states, order)
 E = np.array([states[i]['E'] for i in order])
@@ -53,6 +55,7 @@ def dTedt(t, Te):
     return (source + elastic + inelastic) * (2./3) / (kB * ne)
 
 # Calculate the equilibrium condition
+#TODO: BROKEN!
 if equalize:
     ierr = 1.0
     iTOL = 1.0e-6
@@ -74,26 +77,28 @@ energies= [np.sum(N * E + 1.5 * kB * Te * ne)]
 # Solution loop
 start = datetime.now()
 while times[-1] < T:
+
+    # Integrate population (and energy) equations.
     N = solvers.rk4(dNdt, times[-1], N, dt).clip(min=0)
     if energy:
-        Te = solvers.rk4(dTedt, times[-1], Te, dt) # Advance with same time step
-    else:
-        pass
+        Te = solvers.rk4(dTedt, times[-1], Te, dt)
+        # Regenerate temperature-dependent quantities
+        Ae = matrixgen.electronic2(gas, coeffs, Te)
+        km = matrixgen.km(gas, Te)
+
     ne = N[-1]          # enforce quasi-neutrality
+
     # There must be a more elegant way of accomplishing this ...
     Nalign = []
     for i in range(1, len(N)):
         Nalign.extend([N[i]] * i)
+
     # Python lists are much faster than appending to ndarrays
     emissions.append(Alin * Nalign * dt)
     populations.append(N)
     times.append(times[-1] + dt)
     temperatures.append(Te)
     energies.append(np.sum(N*E) + 1.5 * kB * Te * ne)
-
-    # Regenerate temperature-dependent quantities
-    Ae = matrixgen.electronic(gas, Te)
-    km = matrixgen.km(gas, Te)
 
     # Output some useful information every 1000 steps
     if len(times)%1000 == 0:
@@ -103,6 +108,7 @@ while times[-1] < T:
         print "Simulation time: %g (%g)" % (times[-1], T)
         print "Elapsed Time:", (end - start), "\n"
 
+print "Nm (t = %g): %e \n" % (times[-1], N[1])
 # Generate all emission wavelengths in the proper order
 wavelengths = solvers.wavelengths(states, order)
 order = np.array(order)
