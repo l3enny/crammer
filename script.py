@@ -15,7 +15,7 @@ import csv
 import numpy as np
 
 # Included Modules
-from constants import *     # Useful elementary constants
+from constants import kB, q # Useful elementary constants
 import handler              # Input/output handling
 import matrixgen            # Generates the rate matrices
 import rates
@@ -108,7 +108,6 @@ while times[-1] < T:
         print "Simulation time: %g (%g)" % (times[-1], T)
         print "Elapsed Time:", (end - start), "\n"
 
-print "Nm (t = %g): %e \n" % (times[-1], N[1])
 # Generate all emission wavelengths in the proper order
 wavelengths = solvers.wavelengths(states, order)
 order = np.array(order)
