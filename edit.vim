@@ -8,13 +8,21 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   let s:wipebuf = bufnr('%')
 endif
 set shortmess=aoO
+badd +28 ~/Repos/rategen/main.py
+badd +12 ~/Repos/rategen/distributions.py
+badd +1 ~/Repos/rategen/rate.py
+badd +30 ~/Repos/rategen/xsections/helium/ralchenko.py
+badd +5 ~/Repos/rategen/settings.py
+badd +27 ~/Repos/rategen/convolve.py
+badd +1 ~/Repos/rategen/settings_pack.py
+badd +20 ~/Repos/rategen/rates.py
 badd +96 script.py
 badd +29 transcribe.py
 badd +10 settings.py
 badd +2653 gases/helium/boltzmann.txt
 badd +11 solvers.py
 badd +15 constants.py
-badd +28 matrixgen.py
+badd +65 matrixgen.py
 badd +360 gases/helium/electronic.py
 badd +548 gases/helium/ralchenko.py
 badd +9 gases/helium/states.py
@@ -30,12 +38,12 @@ badd +27 gases/helium/km.py
 badd +15 sc
 badd +26 scratch
 badd +2 gases/helium/__init__.py
-badd +34 visualize.py
+badd +45 visualize.py
 badd +1 or
-badd +0 dump_order.csv
+badd +1 dump_order.csv
 badd +22 test.py
 silent! argdel *
-edit visualize.py
+edit matrixgen.py
 set splitbelow splitright
 wincmd _ | wincmd |
 vsplit
@@ -71,12 +79,12 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 48 - ((25 * winheight(0) + 14) / 29)
+let s:l = 65 - ((18 * winheight(0) + 14) / 29)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-48
-normal! 027l
+65
+normal! 0
 wincmd w
 argglobal
 edit gases/helium/electronic.py
@@ -89,12 +97,12 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 548 - ((0 * winheight(0) + 14) / 29)
+let s:l = 4 - ((1 * winheight(0) + 14) / 29)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-548
-normal! 013l
+4
+normal! 030l
 wincmd w
 argglobal
 edit settings/sandia.py
@@ -107,15 +115,15 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 22 - ((21 * winheight(0) + 14) / 29)
+let s:l = 3 - ((2 * winheight(0) + 14) / 29)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-22
-normal! 09l
+3
+normal! 0
 wincmd w
 argglobal
-edit matrixgen.py
+edit script.py
 setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -125,12 +133,12 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 17 - ((14 * winheight(0) + 14) / 29)
+let s:l = 87 - ((14 * winheight(0) + 14) / 29)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-17
-normal! 0
+87
+normal! 023l
 lcd ~/Repos/crammer
 wincmd w
 exe '1resize ' . ((&lines * 29 + 30) / 61)

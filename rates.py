@@ -15,3 +15,7 @@ class Rates(object):
             select.append(table[i][f])
         spline = UnivariateSpline(self.temperatures, select, s=0, k=2)
         return spline(Te)
+    def km(self, Te):
+        #TODO: Store splines in memory for speedup
+        spline = UnivariateSpline(self.temperatures, self.rates, s=0, k=2)
+        return spline(Te)

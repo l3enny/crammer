@@ -1,6 +1,7 @@
 from constants import *
 
 from gases import helium as gas      # choose gas to simulate
+from gases.helium.pack import km
 
 import cPickle
 
@@ -19,7 +20,7 @@ Te = 0.2 * q / kB                    # effective electron temperature, K
 Ng = P/(kB*Tg)                       # neutral gas density, 1/m^3
 #E0 = EN * Ng                         # The applied electric field
 E0 = 3.00e3 / 1e-1
-M = 4.002602 * amu                   # Mass of the neutral particle
+M = 4.002604 * amu                   # Mass of the neutral particle
 
 # WARNING: This value is worthless for the current equilibrium solver
 ne = 5.363255e13                      # background electron density, 1/m^3

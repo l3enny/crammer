@@ -36,7 +36,7 @@ print "The applied electric field is: %g V/m" % E0
 Ao = matrixgen.optical(gas)
 Alin = matrixgen.linopt(gas)
 Ae = matrixgen.electronic2(gas, coeffs, Te)
-km = matrixgen.km(gas, Te)
+#km = matrixgen.km(gas, Te)
 dE = solvers.dE(states, order)
 E = np.array([states[i]['E'] for i in order])
 
@@ -49,8 +49,8 @@ def dTedt(t, Te):
         E = E0
     else:
         E = 0
-    source = q**2 * ne * E**2 / (me * km * Ng)
-    elastic = - ne * km * Ng * (2 * me / M) * 1.5 * kB * (Te - Tg)
+    source = q**2 * ne * E**2 / (me * km(Te) * Ng)
+    elastic = - ne * km(Te) * Ng * (2 * me / M) * 1.5 * kB * (Te - Tg)
     inelastic = - np.sum(np.dot(ne * Ae * dE, N))
     return (source + elastic + inelastic) * (2./3) / (kB * ne)
 
@@ -84,7 +84,7 @@ while times[-1] < T:
         Te = solvers.rk4(dTedt, times[-1], Te, dt)
         # Regenerate temperature-dependent quantities
         Ae = matrixgen.electronic2(gas, coeffs, Te)
-        km = matrixgen.km(gas, Te)
+        #km = matrixgen.km(gas, Te)
 
     ne = N[-1]          # enforce quasi-neutrality
 
