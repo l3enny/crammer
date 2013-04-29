@@ -13,5 +13,5 @@ class Rates(object):
         select = []
         for table in self.rates:
             select.append(table[i][f])
-        spline = UnivariateSpline(self.temperatures, select, s=0)
+        spline = UnivariateSpline(self.temperatures, select, s=0, k=2)
         return spline(Te)

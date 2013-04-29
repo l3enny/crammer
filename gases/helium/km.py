@@ -23,5 +23,5 @@ def K(Te):
               " extrapolating.")
     # Catch cases not covered by Kushner's simulation, and approximate
     # population of upper states so for emission tracking
-    interp = UnivariateSpline(np.array(Tsim), constants, s=0)
+    interp = UnivariateSpline(np.array(Tsim), constants, s=0, k=2)
     return interp(Te)/N0

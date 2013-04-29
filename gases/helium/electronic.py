@@ -2599,7 +2599,7 @@ def rates(Te, istate, fstate):
         fval = np.array([i[istate][fstate] for i in forward])
     except KeyError:
         fval = np.array([0.0] * len(Tsim))
-    interp = UnivariateSpline(np.array(Tsim), fval, s=0)
+    interp = UnivariateSpline(np.array(Tsim), fval, s=0, k=2)
     return 1e-6 * interp(Te).clip(min=0)
 
 def test():
