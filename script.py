@@ -21,7 +21,7 @@ import matrixgen            # Generates the rate matrices
 import solvers              # Handles general state calculations
 
 # User-specified options
-from settings.sandia import *       # load user settings file
+from settings.sandia4torr import *   # load user settings file
 from gases import helium as gas      # choose gas to simulate
 
 # Convenient localization of state information, and ordering in 
@@ -29,8 +29,6 @@ from gases import helium as gas      # choose gas to simulate
 # TODO: This is a bit inelegant; there should be a better way to do this
 states = gas.states.states
 order = sorted(states.keys(), key=lambda state:states[state]['E'])
-
-print "The applied electric field is: %g V/m" % E0
 
 # Generate initial transition matrices and constants
 Ao = matrixgen.optical(gas)
