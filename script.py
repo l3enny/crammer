@@ -30,8 +30,6 @@ from settings.sandia import *       # load user settings file
 states = gas.states.states
 order = sorted(states.keys(), key=lambda state:states[state]['E'])
 
-print "The applied electric field is: %g V/m" % E0
-
 # Generate initial transition matrices and constants
 Ao = matrixgen.optical(gas)
 Alin = matrixgen.linopt(gas)
@@ -45,12 +43,8 @@ def dNdt(t, N):
     return term
 
 def dTedt(t, Te):
-    if t < tau:
-        E = E0
-    else:
-        E = 0
-    source = q**2 * ne * E**2 / (me * km(Te) * Ng)
-    elastic = - ne * km(Te) * Ng * (2 * me / M) * 1.5 * kB * (Te - Tg)
+    source = q**2 * ne * Ef(t)**2 / (me * km(Te) * Ng)
+    elastic = - ne * km(Te) * Ng * (3 * me / M) * 1.5 * kB * (Te - Tg)
     inelastic = - np.sum(np.dot(ne * Ae * dE, N))
     return (source + elastic + inelastic) * (2./3) / (kB * ne)
 
@@ -64,7 +58,9 @@ if equalize:
         ierr = abs(ne - N[-1]) / N[-1]
         ne = N[-1]
 else:
-    N = np.array([Ng - ne, 0, 0, 0, 0, 0, 0, ne])
+    N = np.zeros(len(states))
+    N[0] = Ng - ne
+    N[-1] = ne
 
 # Initialize solution arrays
 errors = [0.0]
@@ -72,7 +68,7 @@ populations = [N]
 times = [0.0]
 emissions = [np.zeros(Alin.shape)]
 temperatures = [Te]
-energies= [np.sum(N * E + 1.5 * kB * Te * ne)]
+energies = [np.sum(N * E + 1.5 * kB * Te * ne)]
 
 # Solution loop
 start = datetime.now()
@@ -107,6 +103,8 @@ while times[-1] < T:
         print "Te =", Te
         print "Simulation time: %g (%g)" % (times[-1], T)
         print "Elapsed Time:", (end - start), "\n"
+
+print "Final triplet metastable density:", N[-2]
 
 # Generate all emission wavelengths in the proper order
 wavelengths = solvers.wavelengths(states, order)
