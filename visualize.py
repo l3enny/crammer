@@ -38,16 +38,16 @@ def states(times, states, labels, step=1):
     #select = range(N.shape[1])
     odd = [210, 310, 400, 201, 410, 312]
     tmeta = [210]
-    select = tmeta
     with open(labels) as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
         for row in reader:
             l = row
+    select = l
     indices = [l.index(str(i)) for i in select]
     plt.hold(True)
     for i in indices:
-        plt.plot(1e9 * t[::step], N[::step, i], linewidth=3)
-    plt.axis((-350, 1650, 0, 5e16))
+        plt.semilogy(1e9 * t[::step], N[::step, i], linewidth=3)
+    #plt.axis((-350, 1650, 0, 5e16))
     plt.xlabel('Time (ns)')
     plt.ylabel('Density (1/m$^3$)')
     plt.legend(select)
