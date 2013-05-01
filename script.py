@@ -22,7 +22,7 @@ import rates
 import solvers              # Handles general state calculations
 
 # User-specified options
-from settings.sandia import *       # load user settings file
+from settings.sandia_fixed import *       # load user settings file
 
 # Convenient localization of state information, and ordering in 
 # ascending energy.
@@ -34,7 +34,6 @@ order = sorted(states.keys(), key=lambda state:states[state]['E'])
 Ao = matrixgen.optical(gas)
 Alin = matrixgen.linopt(gas)
 Ae = matrixgen.electronic2(gas, coeffs, Te)
-#km = matrixgen.km(gas, Te)
 dE = solvers.dE(states, order)
 E = np.array([states[i]['E'] for i in order])
 
@@ -80,7 +79,6 @@ while times[-1] < T:
         Te = solvers.rk4(dTedt, times[-1], Te, dt)
         # Regenerate temperature-dependent quantities
         Ae = matrixgen.electronic2(gas, coeffs, Te)
-        #km = matrixgen.km(gas, Te)
 
     ne = N[-1]          # enforce quasi-neutrality
 
