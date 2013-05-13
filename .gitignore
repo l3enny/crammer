@@ -2,5 +2,8 @@
 *.csv
 *.pdf
 .DS_Store
+<<<<<<< HEAD
 *.pickle
 *.png
+=======
+>>>>>>> 46ceb5538a67f562ab112766bb16b13c21219726
