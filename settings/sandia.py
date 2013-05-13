@@ -1,5 +1,5 @@
 from constants import *
-from numpy import exp, sqrt, log
+from numpy import exp, sqrt, log, maximum, minimum
 from gases import helium as gas      # choose gas to simulate
 import cPickle
 
@@ -22,28 +22,20 @@ ne = 5.363255e13                     # initial electron density, 1/m^3
 # Solver options (user-defined)
 T = 1.7e-7          # duration to simulate, s
 dt = 1e-10          # time step size, s
-#TOL = 1.0e-06       # absolute allowable truncation error, 1/m^3
-#hmin = 1e-18        # minimum time step, s
-#hmax = 1e-09        # maximum time step, s
 
 # Applied electric field function
 def Ef(t):
     E0 = a = 3.15e2 / 1e-2
-    t0 = b = 2.0e-8
+    t0 = b = 4.0e-8
     tau = 2.5e-08
     c = tau / (2 * sqrt(2 * log(2)))
     return a * exp(-(t - b)**2 / (2 * c**2))
-#def Ef(t):
-#    delay = 10.0e-9
-#    E0 = 2.71e2 / 1e-2
-#    tau = 2.5e-8
-#    if delay < t < tau + delay:
-#        return E0
-#    else:
-#        return 0.0
+    #Ec = 0.125 * E0
+    #return G + maximum(0, minimum(Ec, Ec/(2.*tau) * t + E0 * (tau -
+    #    t0)/(2.*tau) ))
 
 # Output options (user-defined)
-prefix = 'dump'     # file prefix for data files
+prefix = '4torr'     # file prefix for data files
 energy = True
 
 # Broken options!

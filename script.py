@@ -22,7 +22,7 @@ import rates
 import solvers              # Handles general state calculations
 
 # User-specified options
-from settings.sandia import *       # load user settings file
+from settings.s8torr import *       # load user settings file
 
 # Convenient localization of state information, and ordering in 
 # ascending energy.
@@ -67,6 +67,7 @@ populations = [N]
 times = [0.0]
 emissions = [np.zeros(Alin.shape)]
 temperatures = [Te]
+field = [0.0]
 energies = [np.sum(N * E + 1.5 * kB * Te * ne)]
 
 # Solution loop
@@ -92,6 +93,7 @@ while times[-1] < T:
     populations.append(N)
     times.append(times[-1] + dt)
     temperatures.append(Te)
+    field.append(Ef(times[-1]))
     energies.append(np.sum(N*E) + 1.5 * kB * Te * ne)
 
     # Output some useful information every 1000 steps
@@ -108,8 +110,9 @@ print "Final triplet metastable density:", N[1]
 wavelengths = solvers.wavelengths(states, order)
 order = np.array(order)
 names = ['times', 'populations', 'wavelengths', 'temperatures', 'emissions',
-'energies']
-data =  [times, populations, wavelengths, temperatures, emissions, energies]
+'energies', 'field']
+data =  [times, populations, wavelengths, temperatures, emissions, energies,
+        field]
 # Replace the order dump with something a tad more elegant
 with open('dump_order.csv', 'wb') as csvfile:
     writer = csv.writer(csvfile, delimiter=',')
