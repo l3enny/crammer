@@ -22,7 +22,7 @@ import rates
 import solvers              # Handles general state calculations
 
 # User-specified options
-from settings.sandia_fixed import *       # load user settings file
+from settings.sandia import *       # load user settings file
 
 # Convenient localization of state information, and ordering in 
 # ascending energy.
