@@ -25,9 +25,9 @@ dt = 1e-10          # time step size, s
 
 # Applied electric field function
 def Ef(t):
-    E0 = a = 3.15e2 / 1e-2
+    E0 = a = 2.805e2 / 1e-2
     t0 = b = 4.0e-8
-    tau = 2.5e-08
+    tau = 3.5e-08
     c = tau / (2 * sqrt(2 * log(2)))
     return a * exp(-(t - b)**2 / (2 * c**2))
     #Ec = 0.125 * E0
