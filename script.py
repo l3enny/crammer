@@ -22,7 +22,7 @@ import rates
 import solvers              # Handles general state calculations
 
 # User-specified options
-from settings.s4torr import *       # load user settings file
+from settings.s1torr import *       # load user settings file
 
 # Convenient localization of state information, and ordering in 
 # ascending energy.
@@ -97,11 +97,10 @@ while times[-1] < T:
     energies.append(np.sum(N*E) + 1.5 * kB * Te * ne)
 
     # Output some useful information every 1000 steps
-    if len(times)%1000 == 0:
+    if len(times)%100 == 0:
         end = datetime.now()
-        print "%g steps" % len(times)
-        print "Te =", Te
-        print "Simulation time: %g (%g)" % (times[-1], T)
+        print "Te = %e eV" % (Te * kB / q)
+        print "Simulation time: %g s of %g s" % (times[-1], T)
         print "Elapsed Time:", (end - start), "\n"
 
 print "Final triplet metastable density:", N[1]
