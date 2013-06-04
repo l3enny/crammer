@@ -13,9 +13,6 @@ km = pack.km
 with open('./gases/helium/ralchenko_1p0.pickle', mode='r') as f:
     coeffs = cPickle.load(f)
 
-N_meas = np.loadtxt('fit_params.csv', delimiter=',')[1]
-N_meas = N_meas[700:1125]
-
 solver = solvers.rk4
 
 T = 1.7e-7          # duration to simulate, s
@@ -32,7 +29,7 @@ Te = 0.2 * q / kB                    # initial electron temperature, K
 P = 8.0 * 133.322                    # neutral gas pressure, Pa
 Ng = P/(kB*Tg)                       # gas density, 1/m^3
 M = 4.002604 * amu                   # mass of the neutral particle
-ne = 2.229503e11                     # initial electron density, 1/m^3
+ne = 1.161256e14                     # initial electron density, 1/m^3
 
 # Applied electric field function
 #E0 = 1.33140e2 / 1e-2  # amplitude
