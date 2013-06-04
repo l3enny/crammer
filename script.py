@@ -64,7 +64,6 @@ else:
 # Initialize solution arrays
 errors = [0.0]
 populations = [N]
-times = [0.0]
 emissions = [np.zeros(Alin.shape)]
 temperatures = [Te]
 field = [0.0]
@@ -72,12 +71,12 @@ energies = [np.sum(N * E + 1.5 * kB * Te * ne)]
 
 # Solution loop
 start = datetime.now()
-while times[-1] < T:
+for t in times:
 
     # Integrate population (and energy) equations.
-    N = solvers.rk4(dNdt, times[-1], N, dt).clip(min=0)
+    N = solver(dNdt, t, N, dt).clip(min=0)
     if energy:
-        Te = solvers.rk4(dTedt, times[-1], Te, dt)
+        Te = solver(dTedt, t, Te, dt)
         # Regenerate temperature-dependent quantities
         Ae = matrixgen.electronic2(gas, coeffs, Te)
 
@@ -91,16 +90,15 @@ while times[-1] < T:
     # Python lists are much faster than appending to ndarrays
     emissions.append(Alin * Nalign * dt)
     populations.append(N)
-    times.append(times[-1] + dt)
     temperatures.append(Te)
-    field.append(Ef(times[-1]))
+    field.append(Ef(t))
     energies.append(np.sum(N*E) + 1.5 * kB * Te * ne)
 
     # Output some useful information every 1000 steps
-    if len(times)%100 == 0:
+    if len(t/dt)%100 == 0:
         end = datetime.now()
         print "Te = %e eV" % (Te * kB / q)
-        print "Simulation time: %g s of %g s" % (times[-1], T)
+        print "Simulation time: %g s of %g s" % (t, T)
         print "Elapsed Time:", (end - start), "\n"
 
 print "Final triplet metastable density:", N[1]
