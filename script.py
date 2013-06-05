@@ -22,7 +22,7 @@ import rates
 import solvers              # Handles general state calculations
 
 # User-specified options
-from settings.s1torr import *       # load user settings file
+from settings.s8torr import *       # load user settings file
 
 # Convenient localization of state information, and ordering in 
 # ascending energy.
@@ -71,7 +71,7 @@ energies = [np.sum(N * E + 1.5 * kB * Te * ne)]
 
 # Solution loop
 start = datetime.now()
-for t in times:
+for t in times[1:]:
 
     # Integrate population (and energy) equations.
     N = solver(dNdt, t, N, dt).clip(min=0)
@@ -95,7 +95,7 @@ for t in times:
     energies.append(np.sum(N*E) + 1.5 * kB * Te * ne)
 
     # Output some useful information every 1000 steps
-    if len(t/dt)%100 == 0:
+    if int(t/dt)%100 == 0:
         end = datetime.now()
         print "Te = %e eV" % (Te * kB / q)
         print "Simulation time: %g s of %g s" % (t, T)
@@ -111,7 +111,7 @@ names = ['times', 'populations', 'wavelengths', 'temperatures', 'emissions',
 data =  [times, populations, wavelengths, temperatures, emissions, energies,
         field]
 # Replace the order dump with something a tad more elegant
-with open('dump_order.csv', 'wb') as csvfile:
+with open(prefix + '_order.csv', 'wb') as csvfile:
     writer = csv.writer(csvfile, delimiter=',')
     writer.writerow(order)
 handler.save(data, names, prefix)

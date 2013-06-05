@@ -32,7 +32,7 @@ M = 4.002604 * amu                   # mass of the neutral particle
 ne = 2.229503e11                     # initial electron density, 1/m^3
 
 # Applied electric field function
-#E0 = 1.33140e2 / 1e-2  # amplitude
+E0 = 1.34000e2 / 1e-2   # amplitude
 tau = 2.0e-8            # width
 tail = 0.125            # tail fraction
 t0 = 4.0e-8             # center
@@ -66,7 +66,7 @@ def E_tophat_tail(t):
     else:
         return E0 * tail
     
-#Ef = E_gaussian
+Ef = E_gaussian
 
 # Broken options!
 equalize = False    # sets 
