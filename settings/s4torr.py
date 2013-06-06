@@ -5,12 +5,12 @@ from gases import helium as gas      # choose gas to simulate
 import cPickle
 import solvers
 
-with open('./gases/helium/pack_1p0.pickle', mode='r') as f:
+with open('./gases/helium/pack_2p0.pickle', mode='r') as f:
     pack = cPickle.load(f)
 
 km = pack.km
 
-with open('./gases/helium/ralchenko_1p0.pickle', mode='r') as f:
+with open('./gases/helium/ralchenko_2p0.pickle', mode='r') as f:
     coeffs = cPickle.load(f)
 
 solver = solvers.rk4
@@ -32,8 +32,8 @@ M = 4.002604 * amu                   # mass of the neutral particle
 ne = 5.363255e13                     # initial electron density, 1/m^3
 
 # Applied electric field function
-E0 = 1.33140e2 / 1e-2  # amplitude
-tau = 2.0e-8            # width
+E0 = 2.55231e2 / 1e-2   # amplitude
+tau = 5.0e-8            # width
 tail = 0.125            # tail fraction
 t0 = 4.0e-8             # center
 
