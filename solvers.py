@@ -90,8 +90,6 @@ def rkf45(f, t0, y0, hmax, hmin, TOL):
             y = y + (16./135)*k1 + (6656./12825)*k3 + (28561./56430)*k4 \
                   - (9./50)*k5 + (2./55)*k6
             t += h
-            print "y =", y
-            raw_input('')
             yield y, h, eps
 
         q = 0.84 * (TOL/eps)**0.25

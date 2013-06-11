@@ -22,7 +22,7 @@ import rates
 import solvers              # Handles general state calculations
 
 # User-specified options
-from settings.s4torr import *       # load user settings file
+from settings.s1torr import *       # load user settings file
 
 # Convenient localization of state information, and ordering in 
 # ascending energy.
@@ -57,7 +57,7 @@ if equalize:
         ierr = abs(ne - N[-1]) / N[-1]
         ne = N[-1]
 else:
-    N = np.zeros(len(states))
+    N = np.zeros(len(states)) + 1
     N[0] = Ng - ne
     N[-1] = ne
 
@@ -67,16 +67,21 @@ populations = [N]
 emissions = [np.zeros(Alin.shape)]
 temperatures = [Te]
 field = [0.0]
+times = [0.0]
 energies = [np.sum(N * E + 1.5 * kB * Te * ne)]
 
 # Solution loop
 start = datetime.now()
-for t in times[1:]:
+solver = solvers.rkf45(dNdt, times[-1], N, 1e-6, 1e-20, 1e+0)
+steps = 0
+while times[-1] < T:
 
     # Integrate population (and energy) equations.
-    N = solver(dNdt, t, N, dt).clip(min=0)
+    N, dt, error = solver.next()
+    N = N.clip(min=0)
+    times.append(times[-1] + dt)
     if energy:
-        Te = solver(dTedt, t, Te, dt)
+        Te = solvers.rk4(dTedt, times[-1], Te, dt)
         # Regenerate temperature-dependent quantities
         Ae = matrixgen.electronic2(gas, coeffs, Te)
 
@@ -91,14 +96,16 @@ for t in times[1:]:
     emissions.append(Alin * Nalign * dt)
     populations.append(N)
     temperatures.append(Te)
-    field.append(Ef(t))
+    field.append(Ef(times[-1]))
     energies.append(np.sum(N*E) + 1.5 * kB * Te * ne)
 
+    steps += 1
+
     # Output some useful information every 1000 steps
-    if int(t/dt)%100 == 0:
+    if steps%100 == 0:
         end = datetime.now()
         print "Te = %e eV" % (Te * kB / q)
-        print "Simulation time: %g s of %g s" % (t, T)
+        print "Simulation time: %g s of %g s" % (times[-1], T)
         print "Elapsed Time:", (end - start), "\n"
 
 print "Final triplet metastable density:", N[1]
