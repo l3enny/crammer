@@ -15,9 +15,7 @@ with open('./gases/helium/ralchenko_2p0.pickle', mode='r') as f:
 
 solver = solvers.rk4
 
-T = 1.7e-7          # duration to simulate, s
-dt = 4e-10          # time step size, s
-times = np.linspace(0, T, T/dt)
+T = 1.9e-7          # duration to simulate, s
 
 # Output options (user-defined)
 prefix = '8torr'    # file prefix for data files
@@ -32,7 +30,7 @@ M = 4.002604 * amu                   # mass of the neutral particle
 ne = 1.161256e14                     # initial electron density, 1/m^3
 
 # Applied electric field function
-E0 = 4.15000e2 / 1e-2  # amplitude
+E0 = 4.13000e2 / 1e-2  # amplitude
 tau = 4.0e-8            # width
 tail = 0.125            # tail fraction
 t0 = 4.0e-8             # center
