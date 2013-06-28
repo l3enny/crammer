@@ -69,6 +69,7 @@ temperatures = [Te]
 field = [0.0]
 times = [0.0]
 energies = [np.sum(N * E + 1.5 * kB * Te * ne)]
+coupled = [0.0]
 
 # Solution loop
 start = datetime.now()
@@ -98,7 +99,7 @@ while times[-1] < T:
     temperatures.append(Te)
     field.append(Ef(times[-1]))
     energies.append(np.sum(N*E) + 1.5 * kB * Te * ne)
-
+    coupled.append(dt * q**2 * ne * Ef(times[-1])**2 / (me * km(Te) * Ng) + coupled[-1])
     steps += 1
 
     # Output some useful information every 1000 steps
@@ -109,14 +110,15 @@ while times[-1] < T:
         print "Elapsed Time:", (end - start), "\n"
 
 print "Final triplet metastable density:", N[1]
+print "Final coupled energy density:", coupled[-1]
 
 # Generate all emission wavelengths in the proper order
 wavelengths = solvers.wavelengths(states, order)
 order = np.array(order)
 names = ['times', 'populations', 'wavelengths', 'temperatures', 'emissions',
-'energies', 'field']
+'energies', 'field', 'coupled']
 data =  [times, populations, wavelengths, temperatures, emissions, energies,
-        field]
+        field, coupled]
 # Replace the order dump with something a tad more elegant
 with open(prefix + '_order.csv', 'wb') as csvfile:
     writer = csv.writer(csvfile, delimiter=',')
