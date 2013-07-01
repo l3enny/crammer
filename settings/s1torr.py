@@ -9,7 +9,7 @@ with open('./gases/helium/pack_1p0.pickle', mode='r') as f:
 
 km = pack.km
 
-with open('./gases/helium/ralchenko_1p0.pickle', mode='r') as f:
+with open('./gases/helium/combined.pickle', mode='r') as f:
     coeffs = cPickle.load(f)
 
 T = 1.9e-7          # duration to simulate, s

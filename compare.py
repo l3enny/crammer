@@ -6,7 +6,7 @@ from numpy import loadtxt, linspace, average
 from matplotlib import pyplot as plt
 
 if __name__ == "__main__":
-    pre = '4torr'
+    pre = '1torr'
     triplet_metastable = ['210']
     select = triplet_metastable
     length = 3.3 * 1e-2 # pathlength of integrated data
