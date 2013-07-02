@@ -22,7 +22,7 @@ import rates
 import solvers              # Handles general state calculations
 
 # User-specified options
-from settings.s1torr import *       # load user settings file
+from settings.s8torr import *       # load user settings file
 
 # Convenient localization of state information, and ordering in 
 # ascending energy.
@@ -110,7 +110,6 @@ while times[-1] < T:
         print "Elapsed Time:", (end - start), "\n"
 
 print "Final triplet metastable density:", N[1]
-print "Final coupled energy density:", coupled[-1]
 
 # Generate all emission wavelengths in the proper order
 wavelengths = solvers.wavelengths(states, order)
