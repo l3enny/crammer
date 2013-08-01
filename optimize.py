@@ -14,9 +14,9 @@ import csv
 # Third Party Modules
 import numpy as np
 from scipy import optimize
+from scipy.constants import k, e
 
 # Included Modules
-from constants import kB, q # Useful elementary constants
 import handler              # Input/output handling
 import matrixgen            # Generates the rate matrices
 import rates
@@ -43,10 +43,10 @@ def dNdt(t, N):
     return term
 
 def dTedt(t, Te):
-    source = q**2 * ne * Ef(t)**2 / (me * km(Te) * Ng)
-    elastic = - ne * km(Te) * Ng * (3 * me / M) * 1.5 * kB * (Te - Tg)
+    source = e**2 * ne * Ef(t)**2 / (me * km(Te) * Ng)
+    elastic = - ne * km(Te) * Ng * (3 * me / M) * 1.5 * k * (Te - Tg)
     inelastic = - np.sum(np.dot(ne * Ae * dE, N))
-    return (source + elastic + inelastic) * (2./3) / (kB * ne)
+    return (source + elastic + inelastic) * (2./3) / (k * ne)
 
 def integrate(times, solver):
 
@@ -55,7 +55,7 @@ def integrate(times, solver):
     emissions = [np.zeros(Alin.shape)]
     temperatures = [Te]
     field = [0.0]
-    energies = [np.sum(N * E + 1.5 * kB * Te * ne)]
+    energies = [np.sum(N * E + 1.5 * k * Te * ne)]
 
     # Solution loop
     start = datetime.now()
@@ -83,7 +83,7 @@ def integrate(times, solver):
         populations.append(N)
         temperatures.append(Te)
         field.append(Ef(times[-1]))
-        energies.append(np.sum(N*E) + 1.5 * kB * Te * ne)
+        energies.append(np.sum(N*E) + 1.5 * k * Te * ne)
 
 def simulate(times, N_meas, E0, delay):
     dt = 4e-10

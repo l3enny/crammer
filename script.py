@@ -13,9 +13,9 @@ import csv
 
 # Third Party Modules
 import numpy as np
+from scipy.constants import k, e
 
 # Included Modules
-from constants import kB, q # Useful elementary constants
 import handler              # Input/output handling
 import matrixgen            # Generates the rate matrices
 import rates
@@ -34,18 +34,19 @@ order = sorted(states.keys(), key=lambda state:states[state]['E'])
 Ao = matrixgen.optical(gas)
 Alin = matrixgen.linopt(gas)
 Ae = matrixgen.electronic2(gas, coeffs, Te)
+Aa = matrixgen.atomic(gas)
 dE = solvers.dE(states, order)
 E = np.array([states[i]['E'] for i in order])
 
 def dNdt(t, N):
-    term = np.dot(Ae*ne + Ao, N)
+    term = np.dot(Ae*ne + Ao + Aa, N)
     return term
 
 def dTedt(t, Te):
-    source = q**2 * ne * Ef(t)**2 / (me * km(Te) * Ng)
-    elastic = - ne * km(Te) * Ng * (3 * me / M) * 1.5 * kB * (Te - Tg)
+    source = e**2 * ne * Ef(t)**2 / (me * km(Te) * Ng)
+    elastic = - ne * km(Te) * Ng * (3 * me / M) * 1.5 * k * (Te - Tg)
     inelastic = - np.sum(np.dot(ne * Ae * dE, N))
-    return (source + elastic + inelastic) * (2./3) / (kB * ne)
+    return (source + elastic + inelastic) * (2./3) / (k * ne)
 
 # Calculate the equilibrium condition
 #TODO: BROKEN!
@@ -53,7 +54,7 @@ if equalize:
     ierr = 1.0
     iTOL = 1.0e-6
     while ierr > iTOL:
-        N = solvers.svd(Ae*ne + Ao) * Ng
+        N = solvers.svd(Ae*ne + Ao + Aa) * Ng
         ierr = abs(ne - N[-1]) / N[-1]
         ne = N[-1]
 else:
@@ -68,7 +69,7 @@ emissions = [np.zeros(Alin.shape)]
 temperatures = [Te]
 field = [0.0]
 times = [0.0]
-energies = [np.sum(N * E + 1.5 * kB * Te * ne)]
+energies = [np.sum(N * E + 1.5 * k * Te * ne)]
 coupled = [0.0]
 
 # Solution loop
@@ -98,14 +99,14 @@ while times[-1] < T:
     populations.append(N)
     temperatures.append(Te)
     field.append(Ef(times[-1]))
-    energies.append(np.sum(N*E) + 1.5 * kB * Te * ne)
-    coupled.append(dt * q**2 * ne * Ef(times[-1])**2 / (me * km(Te) * Ng) + coupled[-1])
+    energies.append(np.sum(N*E) + 1.5 * k * Te * ne)
+    coupled.append(dt * e**2 * ne * Ef(times[-1])**2 / (me * km(Te) * Ng) + coupled[-1])
     steps += 1
 
     # Output some useful information every 1000 steps
     if steps%100 == 0:
         end = datetime.now()
-        print "Te = %e eV" % (Te * kB / q)
+        print "Te = %e eV" % (Te * k / e)
         print "Simulation time: %g s of %g s" % (times[-1], T)
         print "Elapsed Time:", (end - start), "\n"
 

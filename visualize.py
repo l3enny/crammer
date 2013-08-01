@@ -1,6 +1,6 @@
 import csv
 
-from constants import *
+from scipy.constants import 
 from numpy import loadtxt
 from matplotlib import pyplot as plt
 
@@ -58,7 +58,7 @@ def states(times, states, labels, step=1):
 def temperatures(times, temperatures, step=1):
     t = loadtxt(times, delimiter=',')
     Te = loadtxt(temperatures, delimiter=',')
-    plt.semilogy(1e9 * t[::step], kB * Te[::step] / q, linewidth=2)
+    plt.semilogy(1e9 * t[::step], k * Te[::step] / e, linewidth=2)
     plt.xlabel('Time (ns)')
     plt.ylabel('Electron Temperature (eV)')
     plt.savefig("temperatures.pdf")

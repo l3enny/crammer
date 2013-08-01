@@ -6,10 +6,8 @@ continuous! Yes, this is inconvenient, but (at the moment) the rate
 calculations do not evaluate at predictable or specified values of E.
 """
 
-from numpy import array, log, exp
+from numpy import array, log, exp, pi
 from scipy.special import gamma
-
-from constants import *
 
 def drumax(x, T):
     def dist(E):
