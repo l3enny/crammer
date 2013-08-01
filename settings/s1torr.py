@@ -27,8 +27,8 @@ M = 4.002604 * amu                   # mass of the neutral particle
 ne = 2.229503e11                     # initial electron density, 1/m^3
 
 # Applied electric field function
-E0 = 1.11225e2 / 1e-2   # amplitude
-tau = 4.0e-8            # width
+E0 = 1.70266e2 / 1e-2   # amplitude
+tau = 1.0e-8            # width
 tail = 0.125            # tail fraction
 t0 = 4.0e-8             # center
 
