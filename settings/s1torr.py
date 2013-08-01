@@ -1,4 +1,4 @@
-from constants import *
+from scipy.constants import e, k
 import numpy as np
 from numpy import exp, sqrt, log, maximum, minimum
 from gases import helium as gas      # choose gas to simulate
@@ -20,9 +20,9 @@ energy = True       # track electron energy changes
 
 # Physical system options (user-defined)
 Tg = 300                             # neutral gas temperature, K
-Te = 0.2 * q / kB                    # initial electron temperature, K
+Te = 0.2 * e / k                    # initial electron temperature, K
 P = 1.0 * 133.322                    # neutral gas pressure, Pa
-Ng = P/(kB*Tg)                       # gas density, 1/m^3
+Ng = P/(k*Tg)                       # gas density, 1/m^3
 M = 4.002604 * amu                   # mass of the neutral particle
 ne = 2.229503e11                     # initial electron density, 1/m^3
 
