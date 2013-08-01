@@ -12,7 +12,7 @@ Yu. Ralchenko et al. Atomic Data and Nuclear Data Tables 94 (2008)
 
 #from . import states
 from states import states
-from constants import *
+from scipy.constants import e
 import numpy as np
 from numpy import log
 
@@ -525,7 +525,7 @@ class Transition(object):
             summed = 0.0
             for i in range(1,6):
                 summed += A[i] * (1 - I/E)**i
-            sigma = q**2 * 1e-13/(I*E) * (A[0]*log(E/I) + summed) * 1e-4
+            sigma = e**2 * 1e-13/(I*E) * (A[0]*log(E/I) + summed) * 1e-4
             return np.append(zeros, sigma)
 
         if self.transition['type'] is 'da':

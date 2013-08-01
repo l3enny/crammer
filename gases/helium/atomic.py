@@ -1,4 +1,13 @@
+"""These are atomic excitation transfer rate coefficients from 
+Dubreuil and Catherinot.
+"""
+
+from constants import M
+from scipy.constants import k
+from math import sqrt
+
 A2 = (1e-10)**2
+v_th = sqrt(k * 300 / M)
 Q = {
         302:{301:10e-20},
         301:{302:27e-20},
@@ -17,9 +26,10 @@ Q = {
 def K(istate, fstate):
     try:
         sigma = Q[istate][fstate]
-    except IndexError:
+    except KeyError:
         sigma = 0.0
-    return 0.0
+    rate = v_th * sigma
+    return rate
 
 def test():
     print M

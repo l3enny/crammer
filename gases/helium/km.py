@@ -1,13 +1,13 @@
 import numpy as np
 from scipy.interpolate import UnivariateSpline
-from constants import *
+from scipy.constants import k, e
 
 N0 = 2.688e19 * 1e6
 
 Tsim = np.array([1.620e-1, 2.415e-1, 4.388e-1, 8.413e-1, 1.268e+0, 1.736e+0,
 2.808e+0, 4.188e+0, 4.511e+0, 4.713e+0, 4.999e+0, 5.437e+0, 5.825e+0, 6.198e+0,
 6.565e+0, 7.301e+0, 8.064e+0, 9.079e+0, 1.018e+1, 1.144e+1, 1.287e+1, 1.490e+1,
-1.818e+1]) * q / kB
+1.818e+1]) * e / k
 
 constants = [4.303e11, 5.370e11, 7.376e11, 1.020e12, 1.226e12, 1.391e12,
         1.639e12, 1.819e12, 1.845e12, 1.860e12, 1.879e12, 1.904e12, 1.922e12,
