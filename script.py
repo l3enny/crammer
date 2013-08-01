@@ -13,7 +13,7 @@ import csv
 
 # Third Party Modules
 import numpy as np
-from scipy.constants import k, e
+from scipy.constants import k, e, m_e
 
 # Included Modules
 import handler              # Input/output handling
@@ -43,8 +43,8 @@ def dNdt(t, N):
     return term
 
 def dTedt(t, Te):
-    source = e**2 * ne * Ef(t)**2 / (me * km(Te) * Ng)
-    elastic = - ne * km(Te) * Ng * (3 * me / M) * 1.5 * k * (Te - Tg)
+    source = e**2 * ne * Ef(t)**2 / (m_e * km(Te) * Ng)
+    elastic = - ne * km(Te) * Ng * (3 * m_e / M) * 1.5 * k * (Te - Tg)
     inelastic = - np.sum(np.dot(ne * Ae * dE, N))
     return (source + elastic + inelastic) * (2./3) / (k * ne)
 
@@ -100,7 +100,7 @@ while times[-1] < T:
     temperatures.append(Te)
     field.append(Ef(times[-1]))
     energies.append(np.sum(N*E) + 1.5 * k * Te * ne)
-    coupled.append(dt * e**2 * ne * Ef(times[-1])**2 / (me * km(Te) * Ng) + coupled[-1])
+    coupled.append(dt * e**2 * ne * Ef(times[-1])**2 / (m_e * km(Te) * Ng) + coupled[-1])
     steps += 1
 
     # Output some useful information every 1000 steps

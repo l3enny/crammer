@@ -23,8 +23,8 @@ energy = True       # track electron energy changes
 Tg = 300                             # neutral gas temperature, K
 Te = 0.2 * e / k                    # initial electron temperature, K
 P = 4.0 * 133.322                    # neutral gas pressure, Pa
+M = gas.constants.M
 Ng = P/(k*Tg)                       # gas density, 1/m^3
-M = 4.002604 * amu                   # mass of the neutral particle
 ne = 5.363255e13                     # initial electron density, 1/m^3
 
 # Applied electric field function

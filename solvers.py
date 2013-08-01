@@ -2,7 +2,7 @@
 Sets up the matrix and calculates the solutions.
 """
 
-from scipy.constants import h, c
+from scipy.constants import h, c, m_e
 
 import numpy as np
 

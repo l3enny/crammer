@@ -1,6 +1,5 @@
 import csv
-
-from scipy.constants import 
+from scipy.constants import e, k
 from numpy import loadtxt
 from matplotlib import pyplot as plt
 
@@ -65,7 +64,7 @@ def temperatures(times, temperatures, step=1):
     plt.clf()
 
 if __name__ == "__main__":
-    pre = '1torr'
+    pre = '8torr'
     emissions(pre + "_times.csv", pre + "_emissions.csv", pre +
             "_wavelengths.csv")
     temperatures(pre + "_times.csv", pre + "_temperatures.csv")
