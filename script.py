@@ -44,7 +44,7 @@ def dNdt(t, N):
 
 def dTedt(t, Te):
     source = e**2 * ne * Ef(t)**2 / (m_e * km(Te) * Ng)
-    elastic = - ne * km(Te) * Ng * (3 * m_e / M) * 1.5 * k * (Te - Tg)
+    elastic = - ne * km(Te) * Ng * (2 * m_e / M) * 1.5 * k * (Te - Tg)
     inelastic = - np.sum(np.dot(ne * Ae * dE, N))
     return (source + elastic + inelastic) * (2./3) / (k * ne)
 
