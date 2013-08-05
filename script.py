@@ -58,9 +58,10 @@ if equalize:
         ierr = abs(ne - N[-1]) / N[-1]
         ne = N[-1]
 else:
-    N = np.zeros(len(states)) + 1
-    N[0] = Ng - ne
-    N[-1] = ne
+    N = Ni
+    N[0] = Ng - ne # correct for fractional ionization
+    N[1] = Nm0 # override with measured metastables
+    N[-1] = ne # override with measured electrons
 
 # Initialize solution arrays
 errors = [0.0]

@@ -26,6 +26,8 @@ P = 4.0 * 133.322                    # neutral gas pressure, Pa
 M = gas.constants.M
 Ng = P/(k*Tg)                       # gas density, 1/m^3
 ne = 5.363255e13                     # initial electron density, 1/m^3
+Nm0 = 1.99e14
+Ni = np.load("equilibrium.npy")
 
 # Applied electric field function
 E0 = 2.66890e2 / 1e-2   # amplitude

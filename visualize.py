@@ -64,7 +64,7 @@ def temperatures(times, temperatures, step=1):
     plt.clf()
 
 if __name__ == "__main__":
-    pre = '8torr'
+    pre = '1torr'
     emissions(pre + "_times.csv", pre + "_emissions.csv", pre +
             "_wavelengths.csv")
     temperatures(pre + "_times.csv", pre + "_temperatures.csv")

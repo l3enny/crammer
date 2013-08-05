@@ -19,12 +19,14 @@ prefix = '1torr'    # file prefix for data files
 energy = True       # track electron energy changes
 
 # Physical system options (user-defined)
-Tg = 300                             # neutral gas temperature, K
+Tg = 300                            # neutral gas temperature, K
 Te = 0.2 * e / k                    # initial electron temperature, K
-P = 1.0 * 133.322                    # neutral gas pressure, Pa
+P = 1.0 * 133.322                   # neutral gas pressure, Pa
 M = gas.constants.M
 Ng = P/(k*Tg)                       # gas density, 1/m^3
-ne = 2.229503e11                     # initial electron density, 1/m^3
+ne = 2.229503e11                    # initial electron density, 1/m^3
+Nm0 = 1.24e15
+Ni = np.load("equilibrium.npy")
 
 # Applied electric field function
 E0 = 1.70266e2 / 1e-2   # amplitude
