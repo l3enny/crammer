@@ -2,3 +2,6 @@
 *.pdf
 *.pyc
 *.csv
+*.pdf
+.DS_Store
+*.pickle
