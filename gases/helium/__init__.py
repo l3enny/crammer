@@ -1,9 +1,9 @@
-from constants import q, amu
+from scipy.constants import e, atomic_mass
 import electronic, optical, atomic  # these modules do all the work, this file
                                     # is just a wrapper for their internal
                                     # functions.
 
-M = 4.002602 * amu
+M = 4.002602 * atomic_mass
 
 # *generates and returns* a cross section function
 def sigma_e(istate, fstate):

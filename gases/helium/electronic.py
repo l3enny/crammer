@@ -12,9 +12,13 @@ Yu. Ralchenko et al. Atomic Data and Nuclear Data Tables 94 (2008)
 
 #from . import states
 from states import states
-from constants import *
+from math import pi
+import scipy.constants
 import numpy as np
 from numpy import log
+
+a0 = scipy.constants.physical_constants["Bohr radius"][0]
+Ry = scipy.constants.physical_constants["Rydberg constant times hc in J"][0]
 
 # transition list format:
 # constants = {
