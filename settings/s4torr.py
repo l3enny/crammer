@@ -21,10 +21,10 @@ energy = True       # track electron energy changes
 
 # Physical system options (user-defined)
 Tg = 300                             # neutral gas temperature, K
-Te = 0.2 * e / k                    # initial electron temperature, K
+Te = 0.2 * e / k                     # initial electron temperature, K
 P = 4.0 * 133.322                    # neutral gas pressure, Pa
 M = gas.constants.M
-Ng = P/(k*Tg)                       # gas density, 1/m^3
+Ng = P/(k*Tg)                        # gas density, 1/m^3
 ne = 5.363255e13                     # initial electron density, 1/m^3
 Nm0 = 1.99e14
 Ni = np.load("equilibrium.npy")
@@ -34,6 +34,12 @@ E0 = 2.66890e2 / 1e-2   # amplitude
 tau = 4.0e-8            # width
 tail = 0.125            # tail fraction
 t0 = 4.0e-8             # center
+
+# Perturbations (because it's like that)
+P *= 1.0
+ne *= 1.0
+E0 *= 1.5
+tau *= 1.0
 
 def E_gaussian_tail(t):
     a = E0
