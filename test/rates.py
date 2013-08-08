@@ -5,7 +5,7 @@ import rate
 import distributions
 
 istate = 100
-fstate = 210
+fstate = 'ion'
 
 K1 = np.array([])
 
@@ -16,7 +16,7 @@ for temperature in temperatures:
     new = rate.rate(transition, dist)
     K1 = np.append(K1, new)
 
-np.save("nm_rates.npy", K1)
+np.save("ion_rates.npy", K1)
 
 #loglog(temperatures/q, K1*1e6, '--k')
 #xlabel('Electron Temperature, T$_\mathrm{e}$ (eV)')
