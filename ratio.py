@@ -9,11 +9,11 @@ import cPickle
 
 
 debug = False
-num = 1000
+num = 10000
 temp1 = ([(310, 211), (300, 201)], "temperature_ratio1.csv")
 temp2 = ([(410, 211), (402, 201)], "temperature_ratio2.csv")
 
-transitions, saveas = temp1
+transitions, saveas = temp2
 
 
 #-----------------------------------------------------------------------------
