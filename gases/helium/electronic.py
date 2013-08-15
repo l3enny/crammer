@@ -1,6 +1,22 @@
+"""
+Electron-Atom Excitation Cross Section Constants for Helium
+author: Ben Yee
+last revised: 2012-05-08
+
+This file contains the fitting constants necessary to generate the
+cross section data for helium. 
+
+Yu. Ralchenko et al. Atomic Data and Nuclear Data Tables 94 (2008)
+603-622.
+"""
+
+from states import states
+
 from scipy.constants import e, k
-import ralchenko
+import scipy.constants
 import numpy as np
+from numpy import log
+from math import pi
 from scipy.interpolate import UnivariateSpline
 
 Tsim = np.array([1.620e-1, 2.415e-1, 4.388e-1, 8.413e-1, 1.268e+0, 1.736e+0,
