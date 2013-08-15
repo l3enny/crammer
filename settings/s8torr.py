@@ -3,7 +3,6 @@ import numpy as np
 from numpy import exp, sqrt, log, maximum, minimum
 from gases import helium as gas      # choose gas to simulate
 import cPickle
-import solvers
 
 with open('./gases/helium/pack_1p0.pickle', mode='r') as f:
     pack = cPickle.load(f)
@@ -14,7 +13,7 @@ with open('./gases/helium/combined.pickle', mode='r') as f:
     coeffs = cPickle.load(f)
 
 T = 1.9e-7          # duration to simulate, s
-dt = 5e12           # target time step
+dt = 5e-12          # target time step
 
 # Output options (user-defined)
 prefix = '8torr'    # file prefix for data files
@@ -31,8 +30,8 @@ Nm0 = -1.74e13
 Ni = np.load("equilibrium.npy")
 
 # Applied electric field function
-E0 = 5.11450e2 / 1e-2  # amplitude
-tau = 2.0e-8            # width
+E0 = 3.86800e2 / 1e-2  # amplitude
+tau = 4.0e-8            # width
 tail = 0.125            # tail fraction
 t0 = 4.0e-8             # center
 
@@ -43,6 +42,3 @@ def E_gaussian(t):
     return a * exp(-(t - b)**2 / (2 * c**2))
     
 Ef = E_gaussian
-
-# Broken options!
-equalize = False    # sets 
