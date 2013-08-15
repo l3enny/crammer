@@ -3,7 +3,6 @@ import numpy as np
 from numpy import exp, sqrt, log, maximum, minimum
 from gases import helium as gas      # choose gas to simulate
 import cPickle
-import solvers
 
 with open('./gases/helium/pack_1p0.pickle', mode='r') as f:
     pack = cPickle.load(f)
@@ -43,6 +42,3 @@ def E_gaussian(t):
     return a * exp(-(t - b)**2 / (2 * c**2))
 
 Ef = E_gaussian
-
-# Broken options!
-equalize = False    # sets 
