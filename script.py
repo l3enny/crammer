@@ -75,12 +75,13 @@ coupled = [0.0]
 
 # Solution loop
 start = datetime.now()
-solver = solvers.rkf45(dNdt, times[-1], N, 1e-6, 1e-20, 1e+0)
+solver = solvers.rkf45(dNdt, times[-1], N, dt * 1e6, dt * 1e-6, 1e-1)
 steps = 0
 while times[-1] < T:
 
     # Integrate population (and energy) equations.
-    N, dt, error = solver.next()
+    # N, dt, error = solver.next()
+    N = solvers.rk4(dNdt, times[-1], N, dt)
     N = N.clip(min=0)
     times.append(times[-1] + dt)
     if energy:
@@ -101,7 +102,8 @@ while times[-1] < T:
     temperatures.append(Te)
     field.append(Ef(times[-1]))
     energies.append(np.sum(N*E) + 1.5 * k * Te * ne)
-    coupled.append(dt * e**2 * ne * Ef(times[-1])**2 / (m_e * km(Te) * Ng) + coupled[-1])
+    coupled.append(dt * e**2 * ne * Ef(times[-1])**2 /
+                   (m_e * km(Te) * Ng) + coupled[-1])
     steps += 1
 
     # Output some useful information every 1000 steps

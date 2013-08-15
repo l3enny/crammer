@@ -26,7 +26,7 @@ if __name__ == "__main__":
     t = []
     N = loadtxt(pre + '_populations.csv', delimiter=',')
     t = loadtxt(pre + '_times.csv', delimiter=',')
-    Navg_meas = loadtxt('fitparams.csv', delimiter=',')[:, 1]
+    Navg_meas = loadtxt('fitparams.csv', delimiter=',', skiprows=1)[:, 2]
     N_meas = Navg_meas/length
     t_meas = linspace(0, 2e3, 5e3) * 1e-9
     if zero_correct:
