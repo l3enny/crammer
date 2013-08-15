@@ -30,8 +30,8 @@ Nm0 = 1.24e15
 Ni = np.load("equilibrium.npy")
 
 # Applied electric field function
-E0 = 1.70266e2 / 1e-2   # amplitude
-tau = 1.0e-8            # width
+E0 = 1.11312e2 / 1e-2   # amplitude
+tau = 4.0e-8            # width
 tail = 0.125            # tail fraction
 t0 = 4.0e-8             # center
 
@@ -42,6 +42,3 @@ def E_gaussian(t):
     return a * exp(-(t - b)**2 / (2 * c**2))
 
 Ef = E_gaussian
-
-# Broken options!
-equalize = False    # sets 

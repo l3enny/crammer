@@ -22,7 +22,7 @@ import rates
 import solvers              # Handles general state calculations
 
 # User-specified options
-from settings.s8torr import *       # load user settings file
+from settings.s1torr import *       # load user settings file
 
 # Convenient localization of state information, and ordering in 
 # ascending energy.
@@ -48,20 +48,10 @@ def dTedt(t, Te):
     inelastic = - np.sum(np.dot(ne * Ae * dE, N))
     return (source + elastic + inelastic) * (2./3) / (k * ne)
 
-# Calculate the equilibrium condition
-#TODO: BROKEN!
-if equalize:
-    ierr = 1.0
-    iTOL = 1.0e-6
-    while ierr > iTOL:
-        N = solvers.svd(Ae*ne + Ao + Aa) * Ng
-        ierr = abs(ne - N[-1]) / N[-1]
-        ne = N[-1]
-else:
-    N = Ni
-    N[0] = Ng - ne # correct for fractional ionization
-    N[1] = Nm0 # override with measured metastables
-    N[-1] = ne # override with measured electrons
+N = Ni
+N[0] = Ng - ne # correct for fractional ionization
+N[1] = Nm0 # override with measured metastables
+N[-1] = ne # override with measured electrons
 
 # Initialize solution arrays
 errors = [0.0]
