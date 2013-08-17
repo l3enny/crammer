@@ -39,7 +39,7 @@ dE = solvers.dE(states, order)
 E = np.array([states[i]['E'] for i in order])
 
 def dNdt(t, N):
-    term = np.dot(Ae*ne + Ao + Aa, N)
+    term = np.dot(Ae*ne + Ao + Aa * Ng, N)
     return term
 
 def dTedt(t, Te):
