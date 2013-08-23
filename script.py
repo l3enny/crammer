@@ -65,7 +65,7 @@ coupled = [0.0]
 
 # Solution loop
 start = datetime.now()
-solver = solvers.rkf45(dNdt, times[-1], N, dt * 1e6, dt * 1e-6, 1e-1)
+#solver = solvers.rkf45(dNdt, times[-1], N, dt * 1e6, dt * 1e-6, 1e-1)
 steps = 0
 while times[-1] < T:
 

@@ -7,6 +7,8 @@ import cPickle
 with open('./gases/helium/pack_1p0.pickle', mode='r') as f:
     pack = cPickle.load(f)
 
+# Function containing momentum transfer rate coefficient, accepts temperature
+# as a input, produces rate coefficient in m^3/s
 km = pack.km
 
 with open('./gases/helium/combined.pickle', mode='r') as f:
@@ -23,7 +25,7 @@ energy = True       # track electron energy changes
 Tg = 300                            # neutral gas temperature, K
 Te = 0.2 * e / k                    # initial electron temperature, K
 P = 1.0 * 133.322                   # neutral gas pressure, Pa
-M = gas.constants.M
+M = gas.constants.M                 # atomic mass of gas, kg
 Ng = P/(k*Tg)                       # gas density, 1/m^3
 ne = 2.229503e11                    # initial electron density, 1/m^3
 Nm0 = 1.24e15
