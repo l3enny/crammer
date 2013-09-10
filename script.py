@@ -39,7 +39,7 @@ dE = solvers.dE(states, order)
 E = np.array([states[i]['E'] for i in order])
 
 def dNdt(t, N):
-    term = np.dot(Ae*ne + Ao + Aa, N)
+    term = np.dot(Ae*ne + Ao + Aa * Ng, N)
     return term
 
 def dTedt(t, Te):
@@ -65,7 +65,7 @@ coupled = [0.0]
 
 # Solution loop
 start = datetime.now()
-solver = solvers.rkf45(dNdt, times[-1], N, dt * 1e6, dt * 1e-6, 1e-1)
+#solver = solvers.rkf45(dNdt, times[-1], N, dt * 1e6, dt * 1e-6, 1e-1)
 steps = 0
 while times[-1] < T:
 
