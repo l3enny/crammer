@@ -8,8 +8,9 @@ Requirements: Numpy 1.6+, Scipy 0.10+
 """
 
 # Standard Modules
-from datetime import datetime
 import csv
+from datetime import datetime
+from math import pi
 
 # Third Party Modules
 import numpy as np
@@ -22,21 +23,41 @@ import rates
 import solvers              # Handles general state calculations
 
 # User-specified options
-from settings.s4torr import *       # load user settings file
+from settings.s1torr import *       # load user settings file
 
 # Convenient localization of state information, and ordering in 
 # ascending energy.
 # TODO: This is a bit inelegant; there should be a better way to do this
 states = gas.states.states
 order = sorted(states.keys(), key=lambda state:states[state]['E'])
+dim = len(states)
+
+# Set initial atomic densities
+N = np.array(Ni, ndmin=2).T  # load equilibrium dist. from settings
+N[0] = Ng - ne               # correct for fractional ionization
+N[1] = Nm0                   # override with measured metastables
+N[-1] = ne                   # override with measured electrons
+
+# Generate emission wavelengths and factors for trapping
+l = solvers.wavelengths(states, order)
+g = matrixgen.g_ratio(gas)
+v_th = np.sqrt(k * Tg / M)
 
 # Generate initial transition matrices and constants
 Ao = matrixgen.optical(gas)
-Alin = matrixgen.linopt(gas)
-Ae = matrixgen.electronic2(gas, coeffs, Te)
+allowed = Ao > 0.0
+Ao_allowed = Ao[allowed]
+l_allowed = l[allowed]
 Aa = matrixgen.atomic(gas)
 dE = solvers.dE(states, order)
 E = np.array([states[i]['E'] for i in order])
+Ae = matrixgen.electronic(gas, coeffs, Te)
+# Option to include radiation trapping
+if trapping:
+    k0 = g * l**3 * N * Ao / (8 * pi * pi**0.5 * v_th)      
+    T_f = k0 * R * np.sqrt(pi * np.log(k0 * R)) / 1.6
+    T_f[np.isnan(T_f)] = 1.0
+    Ae *= T_f
 
 def dNdt(t, N):
     term = np.dot(Ae*ne + Ao + Aa * Ng, N)
@@ -48,15 +69,10 @@ def dTedt(t, Te):
     inelastic = - np.sum(np.dot(ne * Ae * dE, N))
     return (source + elastic + inelastic) * (2./3) / (k * ne)
 
-N = Ni
-N[0] = Ng - ne # correct for fractional ionization
-N[1] = Nm0 # override with measured metastables
-N[-1] = ne # override with measured electrons
-
 # Initialize solution arrays
 errors = [0.0]
 populations = [N]
-emissions = [np.zeros(Alin.shape)]
+emissions = [np.zeros(len(l_allowed))]
 temperatures = [Te]
 field = [0.0]
 times = [0.0]
@@ -65,29 +81,34 @@ coupled = [0.0]
 
 # Solution loop
 start = datetime.now()
-solver = solvers.rkf45(dNdt, times[-1], N, dt * 1e6, dt * 1e-6, 1e-1)
 steps = 0
 while times[-1] < T:
-
     # Integrate population (and energy) equations.
-    # N, dt, error = solver.next()
     N = solvers.rk4(dNdt, times[-1], N, dt)
     N = N.clip(min=0)
     times.append(times[-1] + dt)
+
+    # Option to track energy evolution
     if energy:
         Te = solvers.rk4(dTedt, times[-1], Te, dt)
-        # Regenerate temperature-dependent quantities
-        Ae = matrixgen.electronic2(gas, coeffs, Te)
+        Ae = matrixgen.electronic(gas, coeffs, Te)
+
+        # Option to include radiation trapping
+        if trapping:
+            k0 = g * l**3 * N * Ao / (8 * pi * pi**0.5 * v_th)      
+            T_f = k0 * R * np.sqrt(pi * np.log(k0 * R)) / 1.6
+            T_f[np.isnan(T_f)] = 1.0
+            Ae *= T_f
 
     ne = N[-1]          # enforce quasi-neutrality
 
-    # There must be a more elegant way of accomplishing this ...
-    Nalign = []
-    for i in range(1, len(N)):
-        Nalign.extend([N[i]] * i)
+    # Generate the relevant initial atomic states for emission calc
+    Nalign = np.ones((dim, dim))
+    Nalign = Nalign * N.T
+    Nalign = Nalign[allowed]
 
     # Python lists are much faster than appending to ndarrays
-    emissions.append(Alin * Nalign * dt)
+    emissions.append(Ao_allowed * Nalign * dt)
     populations.append(N)
     temperatures.append(Te)
     field.append(Ef(times[-1]))
@@ -97,7 +118,7 @@ while times[-1] < T:
     steps += 1
 
     # Output some useful information every 1000 steps
-    if steps%100 == 0:
+    if steps%1000 == 0:
         end = datetime.now()
         print "Te = %e eV" % (Te * k / e)
         print "Simulation time: %g s of %g s" % (times[-1], T)
@@ -105,13 +126,11 @@ while times[-1] < T:
 
 print "Final triplet metastable density:", N[1]
 
-# Generate all emission wavelengths in the proper order
-wavelengths = solvers.wavelengths(states, order)
 order = np.array(order)
 names = ['times', 'populations', 'wavelengths', 'temperatures', 'emissions',
-'energies', 'field', 'coupled']
-data =  [times, populations, wavelengths, temperatures, emissions, energies,
-        field, coupled]
+         'energies', 'field', 'coupled']
+data =  [times, populations, l_allowed, temperatures, emissions, energies,
+         field, coupled]
 # Replace the order dump with something a tad more elegant
 with open(prefix + '_order.csv', 'wb') as csvfile:
     writer = csv.writer(csvfile, delimiter=',')

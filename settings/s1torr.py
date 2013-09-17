@@ -18,19 +18,21 @@ dt = 5e-12          # target step time
 # Output options (user-defined)
 prefix = '1torr'    # file prefix for data files
 energy = True       # track electron energy changes
+trapping = True     # radiation trapping for excited states
 
 # Physical system options (user-defined)
 Tg = 300                            # neutral gas temperature, K
 Te = 0.2 * e / k                    # initial electron temperature, K
 P = 1.0 * 133.322                   # neutral gas pressure, Pa
-M = gas.constants.M
+M = gas.constants.M                 # atomic mass, kg
+R = 0.033 / 2                       # discharge radius (for trapping)
 Ng = P/(k*Tg)                       # gas density, 1/m^3
 ne = 2.229503e11                    # initial electron density, 1/m^3
-Nm0 = 1.24e15
+Nm0 = 1.24e15 / 0.033
 Ni = np.load("equilibrium.npy")
 
 # Applied electric field function
-E0 = 1.11312e2 / 1e-2   # amplitude
+E0 = 1.11295e2 / 1e-2   # amplitude
 tau = 4.0e-8            # width
 tail = 0.125            # tail fraction
 t0 = 4.0e-8             # center

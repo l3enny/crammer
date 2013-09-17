@@ -5,21 +5,12 @@ from matplotlib import pyplot as plt
 
 def emissions(times, intensities, wavelengths, step=1):
     I = loadtxt(intensities, delimiter=',')
-    L = loadtxt(wavelengths, delimiter=',')
+    L = loadtxt(wavelengths, delimiter='\n')
     t = loadtxt(times, delimiter=',')
     select = [4, 7, 13, 16]
-    nonzero = [0, 3, 4, 5, 6, 7, 8, 13, 19, 21, 22, 26, 31, 32, 35, 36, 38, 39,
-            40, 42, 43, 45, 47, 49, 51, 53, 54, 58, 62, 70, 75, 76, 78, 79, 83,
-            86, 87, 89, 94, 98, 101, 104, 105, 107, 109, 111, 112, 115, 117,
-            128, 129, 134, 140, 144, 145, 151, 153, 155, 157, 159, 162, 163,
-            165, 167, 168]
-    visible = [13, 14, 15, 18, 19, 21, 24, 25, 26, 27, 31, 32, 33, 34, 39, 40,
-            41, 42, 48, 49, 50, 51, 58, 59, 60, 61, 69, 70, 71, 72, 81, 82, 83,
-            84, 94, 95, 96, 97, 108, 109, 110, 111, 123, 124, 125, 126, 139,
-            140, 141, 156, 157, 158, 159, 175, 176, 177, 178, 179, 180, 181,
-            182, 183]
-    coincident = [i for i in visible if i in nonzero]
-    picks = coincident
+    visible = [10, 11, 12, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
+            28, 29, 30, 31]
+    picks = visible
     plt.hold(True)
     for i in picks:
         plt.semilogy(1e9 * t[::step], I[::step,i], linewidth=2)
