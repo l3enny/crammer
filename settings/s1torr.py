@@ -7,6 +7,8 @@ import cPickle
 with open('./gases/helium/pack_1p0.pickle', mode='r') as f:
     pack = cPickle.load(f)
 
+# Function containing momentum transfer rate coefficient, accepts temperature
+# as a input, produces rate coefficient in m^3/s
 km = pack.km
 
 with open('./gases/helium/combined.pickle', mode='r') as f:
