@@ -23,7 +23,7 @@ import rates
 import solvers              # Handles general state calculations
 
 # User-specified options
-from settings.s4torr import *       # load user settings file
+from settings.s8torr import *       # load user settings file
 
 # Convenient localization of state information, and ordering in 
 # ascending energy.
