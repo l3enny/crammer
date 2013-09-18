@@ -44,20 +44,24 @@ g = matrixgen.g_ratio(gas)
 v_th = np.sqrt(k * Tg / M)
 
 # Generate initial transition matrices and constants
-Ao = matrixgen.optical(gas)
+# Option to include radiation trapping
 if trapping:
+    Ao = matrixgen.optical(gas)
     k0 = g * l**3 * N * Ao / (8 * pi * pi**0.5 * v_th)      
     T_f = k0 * R * np.sqrt(pi * np.log(k0 * R)) / 1.6
     T_f[np.isnan(T_f)] = 1.0
     Ao *= T_f
+else:
+    Ao = matrixgen.optical(gas)
 allowed = Ao > 0.0
 Aa = matrixgen.atomic(gas)
 dE = solvers.dE(states, order)
 E = np.array([states[i]['E'] for i in order])
 Ae = matrixgen.electronic(gas, coeffs, Te)
-# Option to include radiation trapping
 
 def dNdt(t, N):
+    print np.max(Ao)
+    raw_input('')
     term = np.dot(Ae*ne + Ao + Aa * Ng, N)
     return term
 
@@ -88,10 +92,11 @@ while times[-1] < T:
 
     # Option to include radiation trapping
     if trapping:
+        Ao = matrixgen.optical(gas)
         k0 = g * l**3 * N * Ao / (8 * pi * pi**0.5 * v_th)      
         T_f = k0 * R * np.sqrt(pi * np.log(k0 * R)) / 1.6
         T_f[np.isnan(T_f)] = 1.0
-        Ao = T_f * matrixgen.optical(gas)
+        Ao *= T_f
 
     # Option to track energy evolution
     if energy:
@@ -118,9 +123,10 @@ while times[-1] < T:
     # Output some useful information every 1000 steps
     if steps%infostep == 0:
         end = datetime.now()
-        print "Te = %e eV" % (Te * k / e)
         print "Simulation time: %g s of %g s" % (times[-1], T)
-        print "Elapsed Time:", (end - start), "\n"
+        print "Elapsed Time:", (end - start)
+        print "Triplet metastable density:", N[1]
+        print "Te = %e eV\n" % (Te * k / e)
 
 print "Final triplet metastable density:", N[1]
 
