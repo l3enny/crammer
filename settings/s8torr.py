@@ -20,7 +20,7 @@ dt = 5e-12          # target step time
 # Output options (user-defined)
 prefix = '8torr'    # file prefix for data files
 energy = True       # track electron energy changes
-trapping = False    # radiation trapping for excited states
+trapping = True     # radiation trapping for excited states
 infostep = 1000     # integer for number of steps per debug info
 
 # Physical system options (user-defined)

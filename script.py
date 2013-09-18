@@ -23,7 +23,7 @@ import rates
 import solvers              # Handles general state calculations
 
 # User-specified options
-from settings.s8torr import *       # load user settings file
+from settings.s1torr import *       # load user settings file
 
 # Convenient localization of state information, and ordering in 
 # ascending energy.
@@ -44,20 +44,21 @@ g = matrixgen.g_ratio(gas)
 v_th = np.sqrt(k * Tg / M)
 
 # Generate initial transition matrices and constants
-Ao = matrixgen.optical(gas)
+if trapping:
+    k0 = g * l**3 * N * Ao / (8 * pi * pi**0.5 * v_th)      
+    T_f = k0 * R * np.sqrt(pi * np.log(k0 * R)) / 1.6
+    T_f[np.isnan(T_f)] = 1.0
+    Ao = T_f * matrixgen.optical(gas)
+else:
+    Ao = matrixgen.optical(gas)
 allowed = Ao > 0.0
 Ao_allowed = Ao[allowed]
 l_allowed = l[allowed]
 Aa = matrixgen.atomic(gas)
 dE = solvers.dE(states, order)
 E = np.array([states[i]['E'] for i in order])
-Ae = matrixgen.electronic(gas, coeffs, Te)
+Ae = T_f * matrixgen.electronic(gas, coeffs, Te)
 # Option to include radiation trapping
-if trapping:
-    k0 = g * l**3 * N * Ao / (8 * pi * pi**0.5 * v_th)      
-    T_f = k0 * R * np.sqrt(pi * np.log(k0 * R)) / 1.6
-    T_f[np.isnan(T_f)] = 1.0
-    Ae *= T_f
 
 def dNdt(t, N):
     term = np.dot(Ae*ne + Ao + Aa * Ng, N)
@@ -88,18 +89,17 @@ while times[-1] < T:
     N = N.clip(min=0)
     times.append(times[-1] + dt)
 
+    # Option to include radiation trapping
+    if trapping:
+        k0 = g * l**3 * N * Ao / (8 * pi * pi**0.5 * v_th)      
+        T_f = k0 * R * np.sqrt(pi * np.log(k0 * R)) / 1.6
+        T_f[np.isnan(T_f)] = 1.0
+        Ao = T_f * matrixgen.optical(gas)
+
     # Option to track energy evolution
     if energy:
         Te = solvers.rk4(dTedt, times[-1], Te, dt)
-        Ae = matrixgen.electronic(gas, coeffs, Te)
-
-        # Option to include radiation trapping
-        if trapping:
-            # Cylindrical trapping factors per Holstein (1957)
-            k0 = g * l**3 * N * Ao / (8 * pi * pi**0.5 * v_th)      
-            T_f = k0 * R * np.sqrt(pi * np.log(k0 * R)) / 1.6
-            T_f[np.isnan(T_f)] = 1.0   # set non-trapped factors to unity
-            Ae *= T_f
+        Ae = T_f * matrixgen.electronic(gas, coeffs, Te)
 
     ne = N[-1]          # enforce quasi-neutrality
 
