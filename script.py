@@ -44,20 +44,17 @@ g = matrixgen.g_ratio(gas)
 v_th = np.sqrt(k * Tg / M)
 
 # Generate initial transition matrices and constants
+Ao = matrixgen.optical(gas)
 if trapping:
     k0 = g * l**3 * N * Ao / (8 * pi * pi**0.5 * v_th)      
     T_f = k0 * R * np.sqrt(pi * np.log(k0 * R)) / 1.6
     T_f[np.isnan(T_f)] = 1.0
-    Ao = T_f * matrixgen.optical(gas)
-else:
-    Ao = matrixgen.optical(gas)
+    Ao *= T_f
 allowed = Ao > 0.0
-Ao_allowed = Ao[allowed]
-l_allowed = l[allowed]
 Aa = matrixgen.atomic(gas)
 dE = solvers.dE(states, order)
 E = np.array([states[i]['E'] for i in order])
-Ae = T_f * matrixgen.electronic(gas, coeffs, Te)
+Ae = matrixgen.electronic(gas, coeffs, Te)
 # Option to include radiation trapping
 
 def dNdt(t, N):
@@ -73,7 +70,7 @@ def dTedt(t, Te):
 # Initialize solution arrays
 errors = [0.0]
 populations = [N]
-emissions = [np.zeros(len(l_allowed))]
+emissions = [np.zeros(len(l[allowed]))]
 temperatures = [Te]
 field = [0.0]
 times = [0.0]
@@ -99,7 +96,7 @@ while times[-1] < T:
     # Option to track energy evolution
     if energy:
         Te = solvers.rk4(dTedt, times[-1], Te, dt)
-        Ae = T_f * matrixgen.electronic(gas, coeffs, Te)
+        Ae = matrixgen.electronic(gas, coeffs, Te)
 
     ne = N[-1]          # enforce quasi-neutrality
 
@@ -109,7 +106,7 @@ while times[-1] < T:
     Nalign = Nalign[allowed]
 
     # Python lists are much faster than appending to ndarrays
-    emissions.append(Ao_allowed * Nalign * dt)
+    emissions.append(Ao[allowed] * Nalign * dt)
     populations.append(N)
     temperatures.append(Te)
     field.append(Ef(times[-1]))
@@ -130,7 +127,7 @@ print "Final triplet metastable density:", N[1]
 order = np.array(order)
 names = ['times', 'populations', 'wavelengths', 'temperatures', 'emissions',
          'energies', 'field', 'coupled']
-data =  [times, populations, l_allowed, temperatures, emissions, energies,
+data =  [times, populations, l[allowed], temperatures, emissions, energies,
          field, coupled]
 # Replace the order dump with something a tad more elegant
 with open(prefix + '_order.csv', 'wb') as csvfile:
