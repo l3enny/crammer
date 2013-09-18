@@ -95,9 +95,10 @@ while times[-1] < T:
 
         # Option to include radiation trapping
         if trapping:
+            # Cylindrical trapping factors per Holstein (1957)
             k0 = g * l**3 * N * Ao / (8 * pi * pi**0.5 * v_th)      
             T_f = k0 * R * np.sqrt(pi * np.log(k0 * R)) / 1.6
-            T_f[np.isnan(T_f)] = 1.0
+            T_f[np.isnan(T_f)] = 1.0   # set non-trapped factors to unity
             Ae *= T_f
 
     ne = N[-1]          # enforce quasi-neutrality
@@ -118,7 +119,7 @@ while times[-1] < T:
     steps += 1
 
     # Output some useful information every 1000 steps
-    if steps%1000 == 0:
+    if steps%infostep == 0:
         end = datetime.now()
         print "Te = %e eV" % (Te * k / e)
         print "Simulation time: %g s of %g s" % (times[-1], T)

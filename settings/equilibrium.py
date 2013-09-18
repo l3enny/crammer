@@ -15,8 +15,10 @@ with open('./gases/helium/combined.pickle', mode='r') as f:
 T = 1.0e-5          # duration to simulate, s
 
 # Output options (user-defined)
-prefix = '1torr_eq'    # file prefix for data files
-energy = False      # track electron energy changes
+prefix = '1torr_eq'  # file prefix for data files
+energy = False       # track electron energy changes
+trapping = True      # radiation trapping for excited states
+infostep = 1000      # integer for number of steps per debug info
 
 # Physical system options (user-defined)
 Tg = 300                            # neutral gas temperature, K
@@ -28,7 +30,5 @@ ne = 2.229503e11                    # initial electron density, 1/m^3
 Nm0 = 1.24e15
 Ni = np.zeros(len(gas.states.states)) + 1
 
-Ef = lambda x: 0.0
-
-# Broken options!
-equalize = False    # sets 
+# Electric field function
+Ef = lambda x: 0.0   # turn in off for simulation
