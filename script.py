@@ -23,7 +23,7 @@ import rates
 import solvers              # Handles general state calculations
 
 # User-specified options
-from settings.s1torr import *       # load user settings file
+from settings.s8torr import *       # load user settings file
 
 # Convenient localization of state information, and ordering in 
 # ascending energy.
@@ -60,8 +60,6 @@ E = np.array([states[i]['E'] for i in order])
 Ae = matrixgen.electronic(gas, coeffs, Te)
 
 def dNdt(t, N):
-    print np.max(Ao)
-    raw_input('')
     term = np.dot(Ae*ne + Ao + Aa * Ng, N)
     return term
 

@@ -35,7 +35,7 @@ Nm0 = -1.74e13 / 0.033
 Ni = np.load("equilibrium.npy")
 
 # Applied electric field function
-E0 = 3.9500e2 / 1e-2  # amplitude
+E0 = 3.8640e2 / 1e-2  # amplitude
 tau = 4.0e-8            # width
 tail = 0.125            # tail fraction
 t0 = 4.0e-8             # center
