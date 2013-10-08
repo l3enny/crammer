@@ -23,7 +23,7 @@ import rates
 import solvers              # Handles general state calculations
 
 # User-specified options
-from settings.s8torr import *       # load user settings file
+from settings.s1torr import *       # load user settings file
 
 # Convenient localization of state information, and ordering in 
 # ascending energy.
@@ -34,9 +34,9 @@ dim = len(states)
 
 # Set initial atomic densities
 N = np.array(Ni, ndmin=2).T  # load equilibrium dist. from settings
-N[0] = Ng - ne               # correct for fractional ionization
+N[0] = Ng - n_e              # correct for fractional ionization
 N[1] = Nm0                   # override with measured metastables
-N[-1] = ne                   # override with measured electrons
+N[-1] = n_e                  # override with measured electrons
 
 # Generate emission wavelengths and factors for trapping
 l = solvers.wavelengths(states, order)
@@ -60,14 +60,20 @@ E = np.array([states[i]['E'] for i in order])
 Ae = matrixgen.electronic(gas, coeffs, Te)
 
 def dNdt(t, N):
-    term = np.dot(Ae*ne + Ao + Aa * Ng, N)
+    term = np.dot(Ae*n_e + Ao + Aa * Ng, N)
     return term
 
+def dn_edt(t, n_e):
+    S = Ae[-1, :-1]
+    alpha_cr = S * N[:-1] / (n_e * N[-1])
+    test = n_e**2 * alpha_cr * N[-1]
+    pass
+
 def dTedt(t, Te):
-    source = e**2 * ne * Ef(t)**2 / (m_e * km(Te) * Ng)
-    elastic = - 3 * ne * km(Te) * Ng * (m_e / M) * 1.5 * k * (Te - Tg)
-    inelastic = - np.sum(np.dot(ne * Ae * dE, N))
-    return (source + elastic + inelastic) * (2./3) / (k * ne)
+    source = e**2 * n_e * Ef(t)**2 / (m_e * km(Te) * Ng)
+    elastic = - 3 * n_e * km(Te) * Ng * (m_e / M) * 1.5 * k * (Te - Tg)
+    inelastic = - np.sum(np.dot(n_e * Ae * dE, N))
+    return (source + elastic + inelastic) * (2./3) / (k * n_e)
 
 # Initialize solution arrays
 errors = [0.0]
@@ -76,7 +82,7 @@ emissions = [np.zeros(len(l[allowed]))]
 temperatures = [Te]
 field = [0.0]
 times = [0.0]
-energies = [np.sum(N * E + 1.5 * k * Te * ne)]
+energies = [np.sum(N * E + 1.5 * k * Te * n_e)]
 coupled = [0.0]
 
 # Solution loop
@@ -101,24 +107,24 @@ while times[-1] < T:
         Te = solvers.rk4(dTedt, times[-1], Te, dt)
         Ae = matrixgen.electronic(gas, coeffs, Te)
 
-    ne = N[-1]          # enforce quasi-neutrality
+    n_e = N[-1]          # enforce quasi-neutrality
 
     # Generate the relevant initial atomic states for emission calc
     Nalign = np.ones((dim, dim))
     Nalign = Nalign * N.T
     Nalign = Nalign[allowed]
 
-    # Python lists are much faster than appending to ndarrays
+    # NB: Appending to lists much faster than appending to arrays
     emissions.append(Ao[allowed] * Nalign * dt)
     populations.append(N)
     temperatures.append(Te)
     field.append(Ef(times[-1]))
-    energies.append(np.sum(N*E) + 1.5 * k * Te * ne)
-    coupled.append(dt * e**2 * ne * Ef(times[-1])**2 /
+    energies.append(np.sum(N*E) + 1.5 * k * Te * n_e)
+    coupled.append(dt * e**2 * n_e * Ef(times[-1])**2 /
                    (m_e * km(Te) * Ng) + coupled[-1])
     steps += 1
 
-    # Output some useful information every 1000 steps
+    # Output some useful information when requested
     if steps%infostep == 0:
         end = datetime.now()
         print "Simulation time: %g s of %g s" % (times[-1], T)

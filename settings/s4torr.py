@@ -30,13 +30,13 @@ P = 4.0 * 133.322                   # neutral gas pressure, Pa
 M = gas.constants.M                 # atomic mass, kg
 R = 0.033 / 2                       # discharge radius (for trapping)
 Ng = P/(k*Tg)                       # gas density, 1/m^3
-ne = 5.363255e13                    # initial electron density, 1/m^3
+n_e = 5.363255e13                   # initial electron density, 1/m^3
 Nm0 = 1.99e14 / 0.033
 Ni = np.load("equilibrium.npy")
 
 # Applied electric field function
-E0 = 2.6626e2 / 1e-2   # amplitude
-tau = 4.0e-8            # width
+E0 = 4.1320e2 / 1e-2   # amplitude
+tau = 1.0e-8            # width
 tail = 0.125            # tail fraction
 t0 = 4.0e-8             # center
 
